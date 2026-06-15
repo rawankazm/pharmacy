@@ -1408,19 +1408,19 @@ const CashierPage = () => {
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4 animate-fade-in" onClick={() => setShowPaymentModal(false)}>
                     <div className="glass-panel rounded-2xl shadow-xl w-full max-w-3xl flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center p-6 border-b border-slate-200/50 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/30">
-                            <h2 className="text-xl font-bold dark:text-gray-100">{t('cashier.payment_method') || "Payment Method"}</h2>
+                            <h2 className="text-xl font-bold dark:text-gray-100">{t('cashier.select_payment_method') || "Payment Method"}</h2>
                             <button onClick={() => setShowPaymentModal(false)} className="text-gray-400 hover:text-black dark:hover:text-white transition-colors">
                                 <X size={24} weight="bold" />
                             </button>
                         </div>
                         <div className="p-4 sm:p-6 flex-1 overflow-y-auto">
-                            <div className="flex flex-row gap-4 sm:gap-6">
-                                {/* Left Column: Payment Options List */}
-                                <div className="w-[130px] sm:w-[180px] flex-shrink-0 flex flex-col gap-2">
+                            <div className="flex flex-col gap-4 sm:gap-6">
+                                {/* Top Section: Payment Options List */}
+                                <div className="flex flex-col gap-2">
                                     <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         {t('cashier.select_payment_method') || "ڕێگای پارەدان"}
                                     </h3>
-                                    <div className="flex flex-col gap-2">
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
                                         {[
                                             { id: 'cash', label: t('payment_methods.cash') || 'Cash (نەختینە)' },
                                             { id: 'fastpay', label: 'FastPay' },
@@ -1448,10 +1448,10 @@ const CashierPage = () => {
                                     </div>
                                 </div>
 
-                                {/* Vertical Divider */}
-                                <div className="w-px bg-slate-200/60 dark:bg-slate-800/60 self-stretch" />
+                                {/* Horizontal Divider */}
+                                <div className="h-px bg-slate-200/60 dark:bg-slate-800/60 w-full" />
 
-                                {/* Right Column: Details & Calculator */}
+                                {/* Bottom Section: Details & Calculator */}
                                 <div className="flex-1 flex flex-col justify-between space-y-4">
                                     <div className="flex-1 space-y-4">
                                         {/* Debt customer fields */}
