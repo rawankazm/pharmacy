@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>زیادکردنی بەرهەمەکان</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Noto Naskh Arabic', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        .card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p { color: rgba(255,255,255,0.65); margin-bottom: 30px; }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 24px 0;
+        }
+        .product-card {
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 12px 8px;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .product-card img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .product-emoji { font-size: 2rem; }
+        .badge {
+            background: rgba(167,139,250,0.2);
+            border: 1px solid #a78bfa;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            color: #a78bfa;
+        }
+        .btn {
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            border: none;
+            color: #fff;
+            font-size: 1.1rem;
+            font-family: inherit;
+            padding: 14px 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(167,139,250,0.4); }
+        .btn:active { transform: translateY(0); }
+        .status {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .status.success { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.4); color: #4ade80; }
+        .status.error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #f87171; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>🛒 زیادکردنی بەرهەمەکان</h1>
+    <p>١٥ بەرهەم دەزیادکرێت بۆ کۆگا، هەر یەکەیان ١٠٠ دانە</p>
+
+    <div class="product-grid">
+        <div class="product-card">
+            <img src="/chips_lays.png" onerror="this.style.display='none';this.nextSibling.style.display='block'" alt="Chips">
+            <span class="product-emoji" style="display:none">🥔</span>
+            <span>چپسی لایس</span>
+            <span class="badge">١٠٠ دانە</span>
+        </div>
+        <div class="product-card">
+            <img src="/pepsi_drink.png" onerror="this.style.display='none';this.nextSibling.style.display='block'" alt="Pepsi">
+            <span class="product-emoji" style="display:none">🥤</span>
+            <span>پیپسی</span>
+            <span class="badge">١٠٠ دانە</span>
+        </div>
+        <div class="product-card">
+            <img src="/coca_cola.png" onerror="this.style.display='none';this.nextSibling.style.display='block'" alt="Coca Cola">
+            <span class="product-emoji" style="display:none">🥤</span>
+            <span>کۆکاکۆلا</span>
+            <span class="badge">١٠٠ دانە</span>
+        </div>
+        <div class="product-card">
+            <img src="/snickers_chocolate.png" onerror="this.style.display='none';this.nextSibling.style.display='block'" alt="Snickers">
+            <span class="product-emoji" style="display:none">🍫</span>
+            <span>شۆکۆلاتە</span>
+            <span class="badge">١٠٠ دانە</span>
+        </div>
+        <div class="product-card">
+            <img src="/oreo_biscuit.png" onerror="this.style.display='none';this.nextSibling.style.display='block'" alt="Oreo">
+            <span class="product-emoji" style="display:none">🍪</span>
+            <span>ئۆریۆ</span>
+            <span class="badge">١٠٠ دانە</span>
+        </div>
+        <div class="product-card">
+            <img src="/water_bottle_new.png" onerror="this.style.display='none';this.nextSibling.style.display='block'" alt="Water">
+            <span class="product-emoji" style="display:none">💧</span>
+            <span>ئاو</span>
+            <span class="badge">١٠٠ دانە</span>
+        </div>
+        <div class="product-card">
+            <img src="/milk_carton.png" onerror="this.style.display='none';this.nextSibling.style.display='block'" alt="Milk">
+            <span class="product-emoji" style="display:none">🥛</span>
+            <span>شیر</span>
+            <span class="badge">١٠٠ دانە</span>
+        </div>
+        <div class="product-card">
+            <img src="/rice_bag.png" onerror="this.style.display='none';this.nextSibling.style.display='block'" alt="Rice">
+            <span class="product-emoji" style="display:none">🍚</span>
+            <span>برنج</span>
+            <span class="badge">١٠٠ دانە</span>
+        </div>
+        <div class="product-card">
+            <img src="/bread_loaf.png" onerror="this.style.display='none';this.nextSibling.style.display='block'" alt="Bread">
+            <span class="product-emoji" style="display:none">🍞</span>
+            <span>نان</span>
+            <span class="badge">١٠٠ دانە</span>
+        </div>
+    </div>
+
+    <button class="btn" onclick="seedProducts()">⬇️ زیادکردنی بەرهەمەکان بۆ کۆگا</button>
+    <div class="status" id="statusBox"></div>
+</div>
+
+<script>
+function seedProducts() {
+    const now = new Date().toISOString();
+    const newProducts = [
+        {
+            id: Date.now() + 1,
+            name: 'Lays Potato Chips',
+            name_ckb: 'چپسی لایس',
+            category: 'Snacks & Sweets',
+            price: 1000,
+            barcode: '8690624101234',
+            image_url: '/chips_lays.png',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 2,
+            name: 'Snickers Chocolate',
+            name_ckb: 'شۆکۆلاتەی سنیکەرز',
+            category: 'Snacks & Sweets',
+            price: 1000,
+            barcode: '5000159461122',
+            image_url: '/snickers_chocolate.png',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 3,
+            name: 'Oreo Biscuits',
+            name_ckb: 'بسکویتی ئۆریۆ',
+            category: 'Snacks & Sweets',
+            price: 750,
+            barcode: '7622300336738',
+            image_url: '/oreo_biscuit.png',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 4,
+            name: 'Pepsi Cola 250ml',
+            name_ckb: 'پیپسی ٢٥٠ مل',
+            category: 'Beverages',
+            price: 500,
+            barcode: '012000000133',
+            image_url: '/pepsi_drink.png',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 5,
+            name: 'Coca-Cola 250ml',
+            name_ckb: 'کۆکاکۆلا ٢٥٠ مل',
+            category: 'Beverages',
+            price: 500,
+            barcode: '5449000000996',
+            image_url: '/coca_cola.png',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 6,
+            name: 'Water Bottle 500ml',
+            name_ckb: 'ئاو ٥٠٠ مل',
+            category: 'Beverages',
+            price: 250,
+            barcode: '8692943016572',
+            image_url: '/water_bottle_new.png',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 7,
+            name: 'Tiger Energy Drink',
+            name_ckb: 'وزەبەخشی تایگەر',
+            category: 'Beverages',
+            price: 1000,
+            barcode: '5900543015483',
+            image_url: '/tiger.png',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 8,
+            name: 'Almarai Fresh Milk 1L',
+            name_ckb: 'شیری تازەی مەراعی ١ لتر',
+            category: 'Dairy & Cheese',
+            price: 2000,
+            barcode: '6281007000109',
+            image_url: '/milk_carton.png',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 9,
+            name: 'Puck Cheddar Cheese',
+            name_ckb: 'پەنیر بووک',
+            category: 'Dairy & Cheese',
+            price: 3000,
+            barcode: '5707311029272',
+            image_url: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&q=80&w=200',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 10,
+            name: 'Basmati Rice 1kg',
+            name_ckb: 'برنجی باسمەتی ١ کگم',
+            category: 'Pantry & Grains',
+            price: 2500,
+            barcode: '8906010061234',
+            image_url: '/rice_bag.png',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 11,
+            name: 'Sunflower Oil 1L',
+            name_ckb: 'ڕۆنی گوڵەبەڕۆژە ١ لتر',
+            category: 'Pantry & Grains',
+            price: 3500,
+            barcode: '8690500123456',
+            image_url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&q=80&w=200',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 12,
+            name: 'Toast Bread White',
+            name_ckb: 'تۆستی سپی',
+            category: 'Bakery',
+            price: 1500,
+            barcode: '6223000412345',
+            image_url: '/bread_loaf.png',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 13,
+            name: 'Samoon 8pcs',
+            name_ckb: 'سەموونی عێراقی ٨ دانە',
+            category: 'Bakery',
+            price: 1000,
+            barcode: '0000000000888',
+            image_url: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&q=80&w=200',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 14,
+            name: 'Fairy Dish Soap 1L',
+            name_ckb: 'زاهی فێری ١ لتر',
+            category: 'Household & Cleaning',
+            price: 2250,
+            barcode: '5410076964264',
+            image_url: 'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&q=80&w=200',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        },
+        {
+            id: Date.now() + 15,
+            name: 'Dettol Handwash 200ml',
+            name_ckb: 'دەستشۆری دیتۆڵ ٢٠٠ مل',
+            category: 'Household & Cleaning',
+            price: 2500,
+            barcode: '5011417572624',
+            image_url: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&q=80&w=200',
+            is_available: true,
+            track_stock: true,
+            stock_quantity: 100,
+            created_at: now
+        }
+    ];
+
+    try {
+        const existing = JSON.parse(localStorage.getItem('mockProducts') || '[]');
+
+        // Merge: skip products with same barcode
+        const existingBarcodes = new Set(existing.map(p => p.barcode).filter(Boolean));
+        const toAdd = newProducts.filter(p => !existingBarcodes.has(p.barcode));
+
+        const merged = [...existing, ...toAdd];
+        localStorage.setItem('mockProducts', JSON.stringify(merged));
+
+        const box = document.getElementById('statusBox');
+        box.style.display = 'block';
+        if (toAdd.length > 0) {
+            box.className = 'status success';
+            box.innerHTML = `✅ ${toAdd.length} بەرهەم زیادکرا بە سەرکەوتوویی!<br><small>هەر یەکەیان ١٠٠ دانە لە کۆگا هەیە</small><br><br><button onclick="window.location.href='/'" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:8px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.9rem;">↩️ گەڕانەوە بۆ ئەپ</button>`;
+        } else {
+            box.className = 'status success';
+            box.innerHTML = `ℹ️ هەموو بەرهەمەکان پێشتر هەن!<br><br><button onclick="window.location.href='/'" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:8px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.9rem;">↩️ گەڕانەوە بۆ ئەپ</button>`;
+        }
+    } catch (e) {
+        const box = document.getElementById('statusBox');
+        box.style.display = 'block';
+        box.className = 'status error';
+        box.textContent = '❌ هەڵەیەک ڕووی دا: ' + e.message;
+    }
+}
+</script>
+</body>
+</html>

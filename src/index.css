@@ -1,0 +1,262 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Default Market Emerald Green Theme */
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #34d399;
+  --color-primary-500: #10b981;
+  --color-primary-600: #059669;
+  --color-primary-700: #047857;
+  --color-primary-800: #065f46;
+  --color-primary-900: #064e3b;
+
+  --bg-main: #f1f5f9; /* Slate 100 bg */
+  --text-main: #0f172a;
+}
+
+.dark {
+  --bg-main: #030712; /* Deep obsidian black bg */
+  --text-main: #f9fafb;
+}
+
+html.dark {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+@font-face {
+  font-family: 'Speda';
+  src: url('./assets/fonts/Speda-Bold.woff') format('woff'),
+    url('./assets/fonts/Speda-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Speda', 'Inter', sans-serif !important;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-kurdish {
+  font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', sans-serif;
+  line-height: 1.6;
+}
+
+/* Custom premium scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+  background-color: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+.dark .glass-panel {
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Neon Aurora Glow */
+.aurora-glow {
+  box-shadow: 0 0 15px -3px rgba(6, 182, 212, 0.3), 0 0 6px -2px rgba(16, 185, 129, 0.25);
+}
+
+/* Premium interactive lift animations */
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 4px 10px -3px rgba(0, 0, 0, 0.05);
+}
+.dark .hover-lift:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35), 0 4px 10px -3px rgba(0, 0, 0, 0.25);
+}
+
+@media print {
+  @page {
+    size: auto;
+    margin: 0;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #receipt,
+  #receipt *,
+  #print-report,
+  #print-report *,
+  #sales-report-print,
+  #sales-report-print *,
+  #shift-report-print,
+  #shift-report-print * {
+    visibility: visible;
+  }
+
+  #receipt,
+  #print-report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Uses available paper width */
+    max-width: 80mm;
+    /* Targeting standard thermal paper */
+    margin: 0;
+    padding: 4mm;
+    background: white;
+    font-size: 12px;
+    /* Ensure readable font size */
+    line-height: 1.2;
+  }
+
+  #sales-report-print,
+  #shift-report-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 10mm;
+    background: white;
+    font-size: 12pt;
+  }
+
+  /* Hide headers/footers if possible in modern browsers */
+  html {
+    height: 100%;
+  }
+}
+
+/* Virtual Keyboard Blue Outline Design */
+.hg-theme-default {
+  background-color: transparent !important;
+  padding: 4px !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.hg-button {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  border-radius: 6px !important;
+  border: 2px solid var(--color-primary-500) !important;
+  /* Theme border */
+  background: white !important;
+  box-shadow: 0 2px 0 var(--color-primary-200) !important;
+  font-weight: 800 !important;
+  /* Bold text for both languages */
+  color: #1f2937 !important;
+  /* gray-800 */
+  transition: all 0.1s ease !important;
+  height: 38px !important;
+  margin: 2px !important;
+  font-size: 14px !important;
+  text-shadow: none !important;
+  text-transform: uppercase !important;
+  /* "Normal" keyboards show uppercase letters */
+}
+
+.hg-button:active {
+  transform: translateY(2px) !important;
+  box-shadow: none !important;
+  background: var(--color-primary-500) !important;
+  color: white !important;
+}
+
+/* Special Keys */
+.hg-button-bksp,
+.hg-button-enter,
+.hg-button-shift,
+.hg-button-tab,
+.hg-button-lock,
+.hg-button-globe,
+.hg-button-abc,
+.hg-button-numbers {
+  background: var(--color-primary-50) !important;
+  /* theme-50 */
+  color: var(--color-primary-800) !important;
+  /* theme-800 */
+  font-weight: 700 !important;
+}
+
+.hg-button-space {
+  color: #1f2937 !important;
+  flex-grow: 3 !important;
+  min-width: 150px !important;
+}
+
+.hg-button-globe {
+  max-width: 45px !important;
+  min-width: 45px !important;
+  font-size: 16px !important;
+}
+
+/* Hide default bottom border since we use box-shadow/border */
+/* Hide default bottom border since we use box-shadow/border */
+.hg-button {
+  border-bottom: 2px solid var(--color-primary-500) !important;
+}
+
+/* Dark Mode */
+.dark .hg-button {
+  background: #1f2937 !important;
+  color: var(--color-primary-400) !important;
+  border-color: var(--color-primary-500) !important;
+}
+
+.dark .hg-button:active {
+  background: var(--color-primary-500) !important;
+  color: white !important;
+}
+
+.dark .hg-button-bksp,
+.dark .hg-button-enter,
+.dark .hg-button-shift {
+  background: #374151 !important;
+  color: var(--color-primary-300) !important;
+}
+
+/* Kurdish Keyboard - Calibri Font */
+.kurdish-keyboard .hg-button {
+  font-family: 'Calibri', 'Arial', sans-serif !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+}
