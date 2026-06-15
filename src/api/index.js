@@ -34,6 +34,25 @@ const DEFAULT_PRODUCTS = [
     { id: 1011, name: 'Burn Ointment', name_ckb: 'مەرهەمی سووتاوی', category: 'Household & Cleaning', price: 4000, barcode: '8690500123456', image_url: 'https://images.unsplash.com/photo-1610488661608-8df004126786?auto=format&fit=crop&q=80&w=200', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
 ];
 
+// Cleanup old market products that might be cached in localStorage
+const cleanupOldProducts = () => {
+    try {
+        const oldProductNames = ["Lays Potato Chips", "Snickers Chocolate", "Oreo Biscuits", "Pepsi Cola 250ml", "Coca-Cola 250ml", "Tiger Energy Drink", "Water Bottle 500ml", "Almarai Fresh Milk 1L", "Puck Cheddar Cheese", "Basmati Rice 1kg", "Sunflower Oil 1L", "Toast Bread White", "Samoon 8pcs", "Fairy Dish Soap 1L", "Dettol Handwash 200ml"];
+        
+        const existing = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]');
+        const filtered = existing.filter(p => !oldProductNames.includes(p.name));
+        
+        if (existing.length !== filtered.length) {
+            localStorage.setItem(PRODUCTS_KEY, JSON.stringify(filtered));
+            console.info(`🧹 Cleaned up ${existing.length - filtered.length} old market products.`);
+        }
+    } catch (e) {
+        console.warn('Could not cleanup old products:', e);
+    }
+};
+// Run cleanup first
+cleanupOldProducts();
+
 // Merge default products into localStorage (adds missing ones by barcode)
 const initDefaultProducts = () => {
     try {
