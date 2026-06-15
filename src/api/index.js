@@ -1,65 +1,12 @@
-import { nhostQuery } from '../nhost';
-
-// Helper to standardise response format
-const wrapRequest = async (requestFn) => {
-    try {
-        const { data, error } = await requestFn();
-        if (error) throw error;
-        return { data };
-    } catch (error) {
-        console.error("API Request Failed:", error);
-        return {
-            data: null,
-            error: error.message || error
-        };
-    }
-};
+import { supabase } from '../supabase';
 
 // --- Products ---
 const PRODUCTS_KEY = 'mockProducts';
 const IMAGES_KEY = 'mockProductImages';
 
-// Default seed products with 100 units each - shown when no Nhost connection
-const DEFAULT_PRODUCTS = [
-    { id: 1001, name: 'Lays Potato Chips', name_ckb: 'چپسی لایس', category: 'Snacks & Sweets', price: 1000, barcode: '8690624101234', image_url: '/chips_lays.png', is_available: true, track_stock: true, stock_quantity: 100, description: 'carton', created_at: new Date().toISOString() },
-    { id: 1002, name: 'Snickers Chocolate', name_ckb: 'شۆکۆلاتەی سنیکەرز', category: 'Snacks & Sweets', price: 1000, barcode: '5000159461122', image_url: '/snickers_chocolate.png', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1003, name: 'Oreo Biscuits', name_ckb: 'بسکویتی ئۆریۆ', category: 'Snacks & Sweets', price: 750, barcode: '7622300336738', image_url: '/oreo_biscuit.png', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1004, name: 'Pepsi Cola 250ml', name_ckb: 'پیپسی ٢٥٠ مل', category: 'Beverages', price: 500, barcode: '012000000133', image_url: '/pepsi_drink.png', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1005, name: 'Coca-Cola 250ml', name_ckb: 'کۆکاکۆلا ٢٥٠ مل', category: 'Beverages', price: 500, barcode: '5449000000996', image_url: '/coca_cola.png', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1006, name: 'Tiger Energy Drink', name_ckb: 'وزەبەخشی تایگەر', category: 'Beverages', price: 1000, barcode: '5900543015483', image_url: '/tiger.png', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1007, name: 'Water Bottle 500ml', name_ckb: 'ئاو ٥٠٠ مل', category: 'Beverages', price: 250, barcode: '8692943016572', image_url: '/water_bottle_new.png', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1008, name: 'Almarai Fresh Milk 1L', name_ckb: 'شیری تازەی مەراعی ١ لتر', category: 'Dairy & Cheese', price: 2000, barcode: '6281007000109', image_url: '/milk_carton.png', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1009, name: 'Puck Cheddar Cheese', name_ckb: 'پەنیر بووک', category: 'Dairy & Cheese', price: 3000, barcode: '5707311029272', image_url: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&q=80&w=200', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1010, name: 'Basmati Rice 1kg', name_ckb: 'برنجی باسمەتی ١ کگم', category: 'Pantry & Grains', price: 2500, barcode: '8906010061234', image_url: '/rice_bag.png', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1011, name: 'Sunflower Oil 1L', name_ckb: 'ڕۆنی گوڵەبەڕۆژە ١ لتر', category: 'Pantry & Grains', price: 3500, barcode: '8690500123456', image_url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&q=80&w=200', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1012, name: 'Toast Bread White', name_ckb: 'تۆستی سپی', category: 'Bakery', price: 1500, barcode: '6223000412345', image_url: '/bread_loaf.png', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1013, name: 'Samoon 8pcs', name_ckb: 'سەموونی عێراقی ٨ دانە', category: 'Bakery', price: 1000, barcode: '0000000000888', image_url: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&q=80&w=200', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1014, name: 'Fairy Dish Soap 1L', name_ckb: 'زاهی فێری ١ لتر', category: 'Household & Cleaning', price: 2250, barcode: '5410076964264', image_url: 'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?auto=format&fit=crop&q=80&w=200', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-    { id: 1015, name: 'Dettol Handwash 200ml', name_ckb: 'دەستشۆری دیتۆڵ ٢٠٠ مل', category: 'Household & Cleaning', price: 2500, barcode: '5011417572624', image_url: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&q=80&w=200', is_available: true, track_stock: true, stock_quantity: 100, created_at: new Date().toISOString() },
-];
-
-// Merge default products into localStorage (adds missing ones by barcode)
-const initDefaultProducts = () => {
-    try {
-        const existing = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]');
-        const existingBarcodes = new Set(existing.map(p => p.barcode).filter(Boolean));
-        const toAdd = DEFAULT_PRODUCTS.filter(p => !existingBarcodes.has(p.barcode));
-        if (toAdd.length > 0) {
-            const merged = [...existing, ...toAdd];
-            localStorage.setItem(PRODUCTS_KEY, JSON.stringify(merged));
-            console.info(`✅ Added ${toAdd.length} default products to localStorage.`);
-        }
-    } catch (e) {
-        console.warn('Could not initialize default products:', e);
-    }
-};
-// Run on import
-initDefaultProducts();
-
 const getLocalProducts = () => {
     const products = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]');
     const images = JSON.parse(localStorage.getItem(IMAGES_KEY) || '{}');
-    // Re-attach stored images to products
     return products.map(p => ({
         ...p,
         image_url: images[String(p.id)] || p.image_url || ''
@@ -68,7 +15,6 @@ const getLocalProducts = () => {
 
 const saveLocalProducts = (list) => {
     try {
-        // Separate base64 images from product list to avoid quota errors
         const images = JSON.parse(localStorage.getItem(IMAGES_KEY) || '{}');
         const stripped = list.map(p => {
             if (p.image_url && p.image_url.startsWith('data:')) {
@@ -80,196 +26,41 @@ const saveLocalProducts = (list) => {
         localStorage.setItem(IMAGES_KEY, JSON.stringify(images));
         localStorage.setItem(PRODUCTS_KEY, JSON.stringify(stripped));
     } catch (e) {
-        // If quota exceeded, try saving without images
         try {
             const stripped = list.map(p => ({ ...p, image_url: p.image_url?.startsWith('data:') ? '__local_image__' : (p.image_url || '') }));
             localStorage.setItem(PRODUCTS_KEY, JSON.stringify(stripped));
         } catch (e2) {
-            console.error('localStorage quota exceeded even without images', e2);
+            console.error('localStorage quota exceeded', e2);
         }
     }
-};
-
-// Insert missing default products into Nhost (fire & forget)
-const seedMissingToNhost = async (nhostProducts) => {
-    const existingBarcodes = new Set(nhostProducts.map(p => p.barcode).filter(Boolean));
-    const missing = DEFAULT_PRODUCTS.filter(p => !existingBarcodes.has(p.barcode));
-    if (missing.length === 0) return [];
-
-    console.info(`🌱 Seeding ${missing.length} missing products into Nhost...`);
-    const inserted = [];
-    for (const p of missing) {
-        const { id, ...data } = p;
-        const res = await nhostQuery(`
-            mutation SeedProduct($name: String!, $name_ckb: String, $category: String!, $price: numeric!, $barcode: String, $image_url: String, $is_available: Boolean, $track_stock: Boolean, $stock_quantity: Int) {
-                insert_products_one(object: {
-                    name: $name, name_ckb: $name_ckb, category: $category,
-                    price: $price, barcode: $barcode, image_url: $image_url,
-                    is_available: $is_available, track_stock: $track_stock, stock_quantity: $stock_quantity
-                }) { id name name_ckb category price barcode image_url is_available track_stock stock_quantity created_at }
-            }
-        `, data);
-        if (!res.error && res.data?.insert_products_one) {
-            inserted.push(res.data.insert_products_one);
-        } else {
-            // If track_stock not supported, try basic
-            const { track_stock, stock_quantity, ...basic } = data;
-            const res2 = await nhostQuery(`
-                mutation SeedProductBasic($name: String!, $name_ckb: String, $category: String!, $price: numeric!, $barcode: String, $image_url: String, $is_available: Boolean) {
-                    insert_products_one(object: {
-                        name: $name, name_ckb: $name_ckb, category: $category,
-                        price: $price, barcode: $barcode, image_url: $image_url, is_available: $is_available
-                    }) { id name name_ckb category price barcode image_url is_available created_at }
-                }
-            `, basic);
-            if (!res2.error && res2.data?.insert_products_one) inserted.push(res2.data.insert_products_one);
-        }
-    }
-    console.info(`✅ Seeded ${inserted.length} products into Nhost.`);
-    return inserted;
 };
 
 export const fetchProducts = async () => {
-    let res = await nhostQuery(`
-        query GetProducts {
-            products(order_by: {id: asc}) {
-                id
-                name
-                category
-                price
-                image_url
-                description
-                name_ckb
-                barcode
-                is_available
-                track_stock
-                stock_quantity
-                created_at
-            }
-        }
-    `);
+    const { data, error } = await supabase.from('products').select('*').order('id', { ascending: true });
     
-    if (!res.error && res.data?.products) {
-        const nhostProducts = res.data.products;
-        // Seed any missing default products into Nhost, then merge
-        const seeded = await seedMissingToNhost(nhostProducts);
-        const merged = [...nhostProducts, ...seeded];
-        saveLocalProducts(merged);
-        return { data: merged, error: null };
+    if (!error && data) {
+        saveLocalProducts(data);
+        return { data, error: null };
     }
 
-    if (res.error && (res.error.includes("track_stock") || res.error.includes("stock_quantity") || res.error.includes("field"))) {
-        console.warn("Nhost products table is missing stock columns. Falling back to basic product fields.");
-        res = await nhostQuery(`
-            query GetProductsBasic {
-                products(order_by: {id: asc}) {
-                    id
-                    name
-                    category
-                    price
-                    image_url
-                    description
-                    name_ckb
-                    barcode
-                    is_available
-                    created_at
-                }
-            }
-        `);
-        if (!res.error && res.data?.products) {
-            const nhostProducts = res.data.products;
-            const seeded = await seedMissingToNhost(nhostProducts);
-            const merged = [...nhostProducts, ...seeded];
-            saveLocalProducts(merged);
-            return { data: merged, error: null };
-        }
-    }
-
-    // Fallback to localStorage
-    console.warn('Nhost unavailable, using localStorage products.');
+    console.warn('Supabase unavailable, using localStorage products.', error);
     return { data: getLocalProducts(), error: null };
 };
 
-
 export const createProduct = async (productData) => {
-    const { track_stock, stock_quantity, ...basicData } = productData;
-    let res = await nhostQuery(`
-        mutation CreateProduct($name: String!, $category: String!, $price: numeric!, $image_url: String, $description: String, $name_ckb: String, $barcode: String, $is_available: Boolean, $track_stock: Boolean, $stock_quantity: Int) {
-            insert_products_one(object: {
-                name: $name,
-                category: $category,
-                price: $price,
-                image_url: $image_url,
-                description: $description,
-                name_ckb: $name_ckb,
-                barcode: $barcode,
-                is_available: $is_available,
-                track_stock: $track_stock,
-                stock_quantity: $stock_quantity
-            }) {
-                id
-                name
-                category
-                price
-                image_url
-                description
-                name_ckb
-                barcode
-                is_available
-                track_stock
-                stock_quantity
-                created_at
-            }
-        }
-    `, productData);
+    const { data, error } = await supabase.from('products').insert([productData]).select().single();
 
-    if (res.error && (res.error.includes("track_stock") || res.error.includes("stock_quantity") || res.error.includes("variable"))) {
-        console.warn("Nhost create product failed due to stock fields, retrying basic create.");
-        res = await nhostQuery(`
-            mutation CreateProductBasic($name: String!, $category: String!, $price: numeric!, $image_url: String, $description: String, $name_ckb: String, $barcode: String, $is_available: Boolean) {
-                insert_products_one(object: {
-                    name: $name,
-                    category: $category,
-                    price: $price,
-                    image_url: $image_url,
-                    description: $description,
-                    name_ckb: $name_ckb,
-                    barcode: $barcode,
-                    is_available: $is_available
-                }) {
-                    id
-                    name
-                    category
-                    price
-                    image_url
-                    description
-                    name_ckb
-                    barcode
-                    is_available
-                    created_at
-                }
-            }
-        `, basicData);
-    }
-
-    if (!res.error && res.data?.insert_products_one) {
-        // Also update localStorage cache
+    if (!error && data) {
         const local = getLocalProducts();
-        local.push(res.data.insert_products_one);
+        local.push(data);
         saveLocalProducts(local);
-        return { data: res.data.insert_products_one, error: null };
+        return { data, error: null };
     }
 
-    // Fallback to localStorage
-    console.warn('Nhost unavailable, saving product to localStorage.');
+    console.warn('Supabase unavailable, saving product to localStorage.', error);
     const local = getLocalProducts();
     const newId = local.length > 0 ? Math.max(...local.map(p => Number(p.id))) + 1 : Date.now();
-    const newProduct = {
-        ...productData,
-        id: newId,
-        is_available: productData.is_available !== false,
-        created_at: new Date().toISOString()
-    };
+    const newProduct = { ...productData, id: newId, created_at: new Date().toISOString() };
     local.push(newProduct);
     saveLocalProducts(local);
     return { data: newProduct, error: null };
@@ -277,56 +68,16 @@ export const createProduct = async (productData) => {
 
 export const updateProduct = async (id, updates) => {
     const { id: _, ...changes } = updates;
-    let res = await nhostQuery(`
-        mutation UpdateProduct($id: bigint!, $changes: products_set_input!) {
-            update_products_by_pk(pk_columns: {id: $id}, _set: $changes) {
-                id
-                name
-                category
-                price
-                image_url
-                description
-                name_ckb
-                barcode
-                is_available
-                track_stock
-                stock_quantity
-                created_at
-            }
-        }
-    `, { id, changes });
+    const { data, error } = await supabase.from('products').update(changes).eq('id', id).select().single();
 
-    if (res.error && (res.error.includes("track_stock") || res.error.includes("stock_quantity") || res.error.includes("field"))) {
-        console.warn("Nhost update product failed due to stock fields, retrying basic update.");
-        const { track_stock, stock_quantity, ...basicChanges } = changes;
-        res = await nhostQuery(`
-            mutation UpdateProductBasic($id: bigint!, $changes: products_set_input!) {
-                update_products_by_pk(pk_columns: {id: $id}, _set: $changes) {
-                    id
-                    name
-                    category
-                    price
-                    image_url
-                    description
-                    name_ckb
-                    barcode
-                    is_available
-                    created_at
-                }
-            }
-        `, { id, changes: basicChanges });
-    }
-
-    if (!res.error && res.data?.update_products_by_pk) {
-        // Sync to localStorage cache
+    if (!error && data) {
         const local = getLocalProducts();
         const idx = local.findIndex(p => String(p.id) === String(id));
         if (idx !== -1) { local[idx] = { ...local[idx], ...changes }; saveLocalProducts(local); }
-        return { data: res.data.update_products_by_pk, error: null };
+        return { data, error: null };
     }
 
-    // Fallback to localStorage
-    console.warn('Nhost unavailable, updating product in localStorage.');
+    console.warn('Supabase unavailable, updating product in localStorage.', error);
     const local = getLocalProducts();
     const idx = local.findIndex(p => String(p.id) === String(id));
     if (idx !== -1) {
@@ -338,22 +89,15 @@ export const updateProduct = async (id, updates) => {
 };
 
 export const deleteProduct = async (id) => {
-    const { data, error } = await nhostQuery(`
-        mutation DeleteProduct($id: bigint!) {
-            delete_products_by_pk(id: $id) {
-                id
-            }
-        }
-    `, { id });
+    const { data, error } = await supabase.from('products').delete().eq('id', id).select().single();
 
-    if (!error && data?.delete_products_by_pk) {
+    if (!error && data) {
         const local = getLocalProducts();
         saveLocalProducts(local.filter(p => String(p.id) !== String(id)));
-        return { data: data.delete_products_by_pk, error: null };
+        return { data, error: null };
     }
 
-    // Fallback to localStorage
-    console.warn('Nhost unavailable, deleting product from localStorage.');
+    console.warn('Supabase unavailable, deleting product from localStorage.', error);
     const local = getLocalProducts();
     saveLocalProducts(local.filter(p => String(p.id) !== String(id)));
     return { data: { id }, error: null };
@@ -365,114 +109,48 @@ const getLocalTables = () => JSON.parse(localStorage.getItem(TABLES_KEY) || '[]'
 const saveLocalTables = (list) => localStorage.setItem(TABLES_KEY, JSON.stringify(list));
 
 export const getTables = async () => {
-    const { data, error } = await nhostQuery(`
-        query GetTables {
-            tables(order_by: {id: asc}) {
-                id
-                name
-                captain_id
-                status
-                code_pin
-                created_at
-            }
-        }
-    `);
-    if (!error && data?.tables) {
-        saveLocalTables(data.tables);
-        return { data: data.tables, error: null };
+    const { data, error } = await supabase.from('tables').select('*').order('id', { ascending: true });
+    if (!error && data) {
+        saveLocalTables(data);
+        return { data, error: null };
     }
-    console.warn('Nhost unavailable, getting tables from localStorage.');
     return { data: getLocalTables(), error: null };
 };
 
 export const createTable = async (tableData) => {
-    const { data, error } = await nhostQuery(`
-        mutation CreateTable($name: String!, $code_pin: String) {
-            insert_tables_one(object: {
-                name: $name,
-                status: "available",
-                code_pin: $code_pin
-            }) {
-                id
-                name
-                captain_id
-                status
-                code_pin
-                created_at
-            }
-        }
-    `, tableData);
-
-    if (!error && data?.insert_tables_one) {
+    const { data, error } = await supabase.from('tables').insert([{ ...tableData, status: 'available' }]).select().single();
+    if (!error && data) {
         const local = getLocalTables();
-        local.push(data.insert_tables_one);
+        local.push(data);
         saveLocalTables(local);
-        return { data: data.insert_tables_one, error: null };
+        return { data, error: null };
     }
-
-    console.warn('Nhost unavailable, creating table in localStorage.');
     const local = getLocalTables();
-    const newTable = {
-        id: Date.now(),
-        name: tableData.name,
-        code_pin: tableData.code_pin,
-        status: 'available',
-        captain_id: null,
-        created_at: new Date().toISOString()
-    };
+    const newTable = { ...tableData, id: Date.now(), status: 'available', created_at: new Date().toISOString() };
     local.push(newTable);
     saveLocalTables(local);
     return { data: newTable, error: null };
 };
 
 export const deleteTable = async (id) => {
-    const { data, error } = await nhostQuery(`
-        mutation DeleteTable($id: bigint!) {
-            delete_tables_by_pk(id: $id) {
-                id
-            }
-        }
-    `, { id });
-
-    if (!error && data?.delete_tables_by_pk) {
+    const { data, error } = await supabase.from('tables').delete().eq('id', id).select().single();
+    if (!error && data) {
         const local = getLocalTables();
         saveLocalTables(local.filter(t => String(t.id) !== String(id)));
-        return { data: data.delete_tables_by_pk, error: null };
+        return { data, error: null };
     }
-
-    console.warn('Nhost unavailable, deleting table from localStorage.');
     const local = getLocalTables();
     saveLocalTables(local.filter(t => String(t.id) !== String(id)));
     return { data: { id }, error: null };
 };
 
 export const assignCaptain = async (tableId, captainId) => {
-    const { data, error } = await nhostQuery(`
-        mutation AssignCaptain($id: bigint!, $captain_id: bigint) {
-            update_tables_by_pk(pk_columns: {id: $id}, _set: {captain_id: $captain_id}) {
-                id
-                captain_id
-            }
-        }
-    `, { id: tableId, captain_id: captainId });
-
-    if (!error && data?.update_tables_by_pk) {
+    const { data, error } = await supabase.from('tables').update({ captain_id: captainId }).eq('id', tableId).select().single();
+    if (!error && data) {
         const local = getLocalTables();
         const idx = local.findIndex(t => String(t.id) === String(tableId));
-        if (idx !== -1) {
-            local[idx].captain_id = captainId;
-            saveLocalTables(local);
-        }
-        return { data: data.update_tables_by_pk, error: null };
-    }
-
-    console.warn('Nhost unavailable, assigning captain in localStorage.');
-    const local = getLocalTables();
-    const idx = local.findIndex(t => String(t.id) === String(tableId));
-    if (idx !== -1) {
-        local[idx].captain_id = captainId;
-        saveLocalTables(local);
-        return { data: local[idx], error: null };
+        if (idx !== -1) { local[idx].captain_id = captainId; saveLocalTables(local); }
+        return { data, error: null };
     }
     return { data: null, error: 'Table not found' };
 };
@@ -483,54 +161,24 @@ const getLocalCaptains = () => JSON.parse(localStorage.getItem(CAPTAINS_KEY) || 
 const saveLocalCaptains = (list) => localStorage.setItem(CAPTAINS_KEY, JSON.stringify(list));
 
 export const getCaptains = async () => {
-    const { data, error } = await nhostQuery(`
-        query GetCaptains {
-            captains(order_by: {id: asc}) {
-                id
-                name
-                code
-                created_at
-            }
-        }
-    `);
-    if (!error && data?.captains) {
-        saveLocalCaptains(data.captains);
-        return { data: data.captains, error: null };
+    const { data, error } = await supabase.from('captains').select('*').order('id', { ascending: true });
+    if (!error && data) {
+        saveLocalCaptains(data);
+        return { data, error: null };
     }
-    console.warn('Nhost unavailable, getting captains from localStorage.');
     return { data: getLocalCaptains(), error: null };
 };
 
 export const createCaptain = async (captainData) => {
-    const { data, error } = await nhostQuery(`
-        mutation CreateCaptain($name: String!, $code: String!) {
-            insert_captains_one(object: {
-                name: $name,
-                code: $code
-            }) {
-                id
-                name
-                code
-                created_at
-            }
-        }
-    `, captainData);
-
-    if (!error && data?.insert_captains_one) {
+    const { data, error } = await supabase.from('captains').insert([captainData]).select().single();
+    if (!error && data) {
         const local = getLocalCaptains();
-        local.push(data.insert_captains_one);
+        local.push(data);
         saveLocalCaptains(local);
-        return { data: data.insert_captains_one, error: null };
+        return { data, error: null };
     }
-
-    console.warn('Nhost unavailable, creating captain in localStorage.');
     const local = getLocalCaptains();
-    const newCaptain = {
-        id: Date.now(),
-        name: captainData.name,
-        code: captainData.code,
-        created_at: new Date().toISOString()
-    };
+    const newCaptain = { id: Date.now(), ...captainData, created_at: new Date().toISOString() };
     local.push(newCaptain);
     saveLocalCaptains(local);
     return { data: newCaptain, error: null };
@@ -538,83 +186,27 @@ export const createCaptain = async (captainData) => {
 
 export const updateCaptain = async (id, updates) => {
     const { id: _, ...changes } = updates;
-    const { data, error } = await nhostQuery(`
-        mutation UpdateCaptain($id: bigint!, $changes: captains_set_input!) {
-            update_captains_by_pk(pk_columns: {id: $id}, _set: $changes) {
-                id
-                name
-                code
-                created_at
-            }
-        }
-    `, { id, changes });
-
-    if (!error && data?.update_captains_by_pk) {
-        const local = getLocalCaptains();
-        const idx = local.findIndex(c => String(c.id) === String(id));
-        if (idx !== -1) {
-            local[idx] = { ...local[idx], ...changes };
-            saveLocalCaptains(local);
-        }
-        return { data: data.update_captains_by_pk, error: null };
-    }
-
-    console.warn('Nhost unavailable, updating captain in localStorage.');
-    const local = getLocalCaptains();
-    const idx = local.findIndex(c => String(c.id) === String(id));
-    if (idx !== -1) {
-        local[idx] = { ...local[idx], ...changes };
-        saveLocalCaptains(local);
-        return { data: local[idx], error: null };
-    }
+    const { data, error } = await supabase.from('captains').update(changes).eq('id', id).select().single();
+    if (!error && data) return { data, error: null };
     return { data: null, error: 'Captain not found' };
 };
 
 export const deleteCaptain = async (id) => {
-    const { data, error } = await nhostQuery(`
-        mutation DeleteCaptain($id: bigint!) {
-            delete_captains_by_pk(id: $id) {
-                id
-            }
-        }
-    `, { id });
-
-    if (!error && data?.delete_captains_by_pk) {
-        const local = getLocalCaptains();
-        saveLocalCaptains(local.filter(c => String(c.id) !== String(id)));
-        return { data: data.delete_captains_by_pk, error: null };
-    }
-
-    console.warn('Nhost unavailable, deleting captain from localStorage.');
-    const local = getLocalCaptains();
-    saveLocalCaptains(local.filter(c => String(c.id) !== String(id)));
+    const { data, error } = await supabase.from('captains').delete().eq('id', id).select().single();
+    if (!error && data) return { data, error: null };
     return { data: { id }, error: null };
 };
 
 // --- Cashiers ---
 const CASHIERS_KEY = 'mockCashiers';
-
 const getLocalCashiers = () => JSON.parse(localStorage.getItem(CASHIERS_KEY) || '[]');
 const saveLocalCashiers = (list) => localStorage.setItem(CASHIERS_KEY, JSON.stringify(list));
 
 export const getCashiers = async () => {
-    const { data, error } = await nhostQuery(`
-        query GetCashiers {
-            cashiers(order_by: {id: asc}) {
-                id
-                name
-                code
-                created_at
-            }
-        }
-    `);
-    if (!error && data?.cashiers) {
-        return { data: data.cashiers, error: null };
-    }
-    // Fallback to localStorage
+    const { data, error } = await supabase.from('cashiers').select('*').order('id', { ascending: true });
+    if (!error && data) return { data, error: null };
     const local = getLocalCashiers();
     if (local.length === 0) {
-        // Seed a default cashier so the login screen is never empty
         const seed = [{ id: 1, name: 'Cashier 1', code: '1234', created_at: new Date().toISOString() }];
         saveLocalCashiers(seed);
         return { data: seed, error: null };
@@ -623,26 +215,10 @@ export const getCashiers = async () => {
 };
 
 export const createCashier = async (cashierData) => {
-    const { data, error } = await nhostQuery(`
-        mutation CreateCashier($name: String!, $code: String!) {
-            insert_cashiers_one(object: {
-                name: $name,
-                code: $code
-            }) {
-                id
-                name
-                code
-                created_at
-            }
-        }
-    `, cashierData);
-    if (!error && data?.insert_cashiers_one) {
-        return { data: data.insert_cashiers_one, error: null };
-    }
-    // Fallback to localStorage
+    const { data, error } = await supabase.from('cashiers').insert([cashierData]).select().single();
+    if (!error && data) return { data, error: null };
     const local = getLocalCashiers();
-    const newId = local.length > 0 ? Math.max(...local.map(c => Number(c.id))) + 1 : 1;
-    const newCashier = { ...cashierData, id: newId, created_at: new Date().toISOString() };
+    const newCashier = { ...cashierData, id: Date.now(), created_at: new Date().toISOString() };
     local.push(newCashier);
     saveLocalCashiers(local);
     return { data: newCashier, error: null };
@@ -650,45 +226,14 @@ export const createCashier = async (cashierData) => {
 
 export const updateCashier = async (id, updates) => {
     const { id: _, ...changes } = updates;
-    const { data, error } = await nhostQuery(`
-        mutation UpdateCashier($id: bigint!, $changes: cashiers_set_input!) {
-            update_cashiers_by_pk(pk_columns: {id: $id}, _set: $changes) {
-                id
-                name
-                code
-                created_at
-            }
-        }
-    `, { id, changes });
-    if (!error && data?.update_cashiers_by_pk) {
-        return { data: data.update_cashiers_by_pk, error: null };
-    }
-    // Fallback to localStorage
-    const local = getLocalCashiers();
-    const idx = local.findIndex(c => String(c.id) === String(id));
-    if (idx !== -1) {
-        local[idx] = { ...local[idx], ...changes };
-        saveLocalCashiers(local);
-        return { data: local[idx], error: null };
-    }
+    const { data, error } = await supabase.from('cashiers').update(changes).eq('id', id).select().single();
+    if (!error && data) return { data, error: null };
     return { data: null, error: 'Cashier not found' };
 };
 
 export const deleteCashier = async (id) => {
-    const { data, error } = await nhostQuery(`
-        mutation DeleteCashier($id: bigint!) {
-            delete_cashiers_by_pk(id: $id) {
-                id
-            }
-        }
-    `, { id });
-    if (!error && data?.delete_cashiers_by_pk) {
-        return { data: data.delete_cashiers_by_pk, error: null };
-    }
-    // Fallback to localStorage
-    const local = getLocalCashiers();
-    const filtered = local.filter(c => String(c.id) !== String(id));
-    saveLocalCashiers(filtered);
+    const { data, error } = await supabase.from('cashiers').delete().eq('id', id).select().single();
+    if (!error && data) return { data, error: null };
     return { data: { id }, error: null };
 };
 
@@ -698,61 +243,24 @@ const getLocalDebts = () => JSON.parse(localStorage.getItem(DEBTS_KEY) || '[]');
 const saveLocalDebts = (list) => localStorage.setItem(DEBTS_KEY, JSON.stringify(list));
 
 export const fetchDebts = async () => {
-    const { data, error } = await nhostQuery(`
-        query GetDebts {
-            debts(order_by: {created_at: desc}) {
-                id
-                customer_name
-                customer_phone
-                amount
-                order_id
-                status
-                created_at
-            }
-        }
-    `);
-    if (!error && data?.debts) {
-        // Sync to localStorage cache
-        saveLocalDebts(data.debts);
-        return { data: data.debts, error: null };
+    const { data, error } = await supabase.from('debts').select('*').order('created_at', { ascending: false });
+    if (!error && data) {
+        saveLocalDebts(data);
+        return { data, error: null };
     }
-    // Fallback to localStorage
     return { data: getLocalDebts(), error: null };
 };
 
 export const createDebt = async (debtData) => {
-    const { data, error } = await nhostQuery(`
-        mutation CreateDebt($customer_name: String!, $customer_phone: String!, $amount: numeric!, $order_id: bigint, $status: String) {
-            insert_debts_one(object: {
-                customer_name: $customer_name,
-                customer_phone: $customer_phone,
-                amount: $amount,
-                order_id: $order_id,
-                status: $status
-            }) {
-                id
-                customer_name
-                customer_phone
-                amount
-                order_id
-                status
-                created_at
-            }
-        }
-    `, debtData);
-    if (!error && data?.insert_debts_one) {
+    const { data, error } = await supabase.from('debts').insert([debtData]).select().single();
+    if (!error && data) {
         const local = getLocalDebts();
-        local.unshift(data.insert_debts_one);
+        local.unshift(data);
         saveLocalDebts(local);
-        return { data: data.insert_debts_one, error: null };
+        return { data, error: null };
     }
-    // Fallback to localStorage
     const local = getLocalDebts();
-    const newDebt = {
-        ...debtData,
-        id: Date.now(),
-        created_at: new Date().toISOString()
-    };
+    const newDebt = { ...debtData, id: Date.now(), created_at: new Date().toISOString() };
     local.unshift(newDebt);
     saveLocalDebts(local);
     return { data: newDebt, error: null };
@@ -760,486 +268,132 @@ export const createDebt = async (debtData) => {
 
 export const updateDebt = async (id, updates) => {
     const { id: _, ...changes } = updates;
-    const { data, error } = await nhostQuery(`
-        mutation UpdateDebt($id: bigint!, $changes: debts_set_input!) {
-            update_debts_by_pk(pk_columns: {id: $id}, _set: $changes) {
-                id
-                customer_name
-                customer_phone
-                amount
-                order_id
-                status
-                created_at
-            }
-        }
-    `, { id, changes });
-    if (!error && data?.update_debts_by_pk) {
-        const local = getLocalDebts();
-        const idx = local.findIndex(d => String(d.id) === String(id));
-        if (idx !== -1) { local[idx] = { ...local[idx], ...changes }; saveLocalDebts(local); }
-        return { data: data.update_debts_by_pk, error: null };
-    }
-    // Fallback to localStorage
-    const local = getLocalDebts();
-    const idx = local.findIndex(d => String(d.id) === String(id));
-    if (idx !== -1) {
-        local[idx] = { ...local[idx], ...changes };
-        saveLocalDebts(local);
-        return { data: local[idx], error: null };
-    }
-    return { data: null, error: null };
+    const { data, error } = await supabase.from('debts').update(changes).eq('id', id).select().single();
+    if (!error && data) return { data, error: null };
+    return { data: null, error: 'Error' };
 };
 
 export const deleteDebt = async (id) => {
-    const { data, error } = await nhostQuery(`
-        mutation DeleteDebt($id: bigint!) {
-            delete_debts_by_pk(id: $id) {
-                id
-            }
-        }
-    `, { id });
-    if (!error && data?.delete_debts_by_pk) {
-        const local = getLocalDebts();
-        saveLocalDebts(local.filter(d => String(d.id) !== String(id)));
-        return { data: data.delete_debts_by_pk, error: null };
-    }
-    // Fallback to localStorage
-    const local = getLocalDebts();
-    saveLocalDebts(local.filter(d => String(d.id) !== String(id)));
+    const { data, error } = await supabase.from('debts').delete().eq('id', id).select().single();
+    if (!error && data) return { data, error: null };
     return { data: { id }, error: null };
 };
 
-// --- Orders ---
+// --- Orders / Sales ---
+const ORDERS_KEY = 'mockOrders';
+const SALES_KEY = 'mockSales';
+
+const getLocalOrders = () => JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]');
+const saveLocalOrders = (list) => localStorage.setItem(ORDERS_KEY, JSON.stringify(list));
+
 export const getOrders = async () => {
-    const { data, error } = await nhostQuery(`
-        query GetPendingOrders {
-            orders(where: {status: {_eq: "pending"}}, order_by: {created_at: desc}) {
-                id
-                table_id
-                status
-                total
-                payment_method
-                cashier_id
-                created_at
-                paid_at
-                void_reason
-                order_items {
-                    quantity
-                    price
-                    product {
-                        name
-                        image_url
-                    }
-                    products {
-                        name
-                        image_url
-                    }
-                }
-            }
-        }
-    `);
-
-    if (error) {
-        console.error("Get Orders Failed:", error);
-        const mockOrders = JSON.parse(localStorage.getItem('mockOrders') || '[]');
-        return { data: mockOrders, error: null };
+    const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+    if (!error && data) {
+        saveLocalOrders(data);
+        return { data, error: null };
     }
-
-    // Transform to match frontend expectation
-    const formatted = (data?.orders || []).map(o => ({
-        ...o,
-        items: (o.order_items || []).map(oi => {
-            const prod = oi.products || oi.product;
-            return {
-                quantity: oi.quantity,
-                price: oi.price,
-                name: prod?.name,
-                image_url: prod?.image_url
-            };
-        })
-    }));
-
-    // Cache to local storage
-    localStorage.setItem('mockOrders', JSON.stringify(formatted));
-
-    return { data: formatted, error: null };
+    return { data: getLocalOrders(), error: null };
 };
 
 export const createOrder = async (orderData) => {
-    const { table_id, items, total } = orderData;
-    const formattedItems = items.map(item => ({
-        product_id: item.product_id,
-        quantity: item.quantity,
-        price: item.price
-    }));
-
-    const { data, error } = await nhostQuery(`
-        mutation CreateOrder($table_id: bigint, $total: numeric, $items: [order_items_insert_input!]!, $updateTable: Boolean!) {
-            insert_orders_one(object: {
-                table_id: $table_id,
-                total: $total,
-                status: "pending",
-                order_items: {
-                    data: $items
-                }
-            }) {
-                id
-                table_id
-                total
-                status
-                created_at
-            }
-            update_tables(where: {id: {_eq: $table_id}}, _set: {status: "occupied"}) @include(if: $updateTable) {
-                affected_rows
-            }
-        }
-    `, {
-        table_id: table_id || null,
-        total,
-        items: formattedItems,
-        updateTable: !!table_id
-    });
-
-    if (error) {
-        console.warn("Nhost createOrder failed, falling back to local order.");
-        const fallbackOrder = {
-            id: Date.now(),
-            table_id: table_id || null,
-            total,
-            status: "pending",
-            created_at: new Date().toISOString(),
-            items: items || []
-        };
-        const local = JSON.parse(localStorage.getItem('mockOrders') || '[]');
-        local.push(fallbackOrder);
-        localStorage.setItem('mockOrders', JSON.stringify(local));
-        return { data: fallbackOrder, error: null };
+    const payload = {
+        total: orderData.total || 0,
+        status: orderData.status || 'pending',
+        items: orderData.items || [],
+        table_id: orderData.table_id || null,
+        captain_id: orderData.captain_id || null,
+        created_at: new Date().toISOString(),
+    };
+    
+    const { data, error } = await supabase.from('orders').insert([payload]).select().single();
+    if (!error && data) {
+        const local = getLocalOrders();
+        local.unshift(data);
+        saveLocalOrders(local);
+        return { data, error: null };
     }
-
-    return { data: data?.insert_orders_one, error: null };
+    const local = getLocalOrders();
+    const newOrder = { ...payload, id: Date.now() };
+    local.unshift(newOrder);
+    saveLocalOrders(local);
+    return { data: newOrder, error: null };
 };
 
 export const updateOrder = async (id, updates) => {
-    const { items, total_amount } = updates;
-    const formattedItems = items.map(item => ({
-        order_id: id,
-        product_id: item.product_id,
-        quantity: item.quantity,
-        price: item.price
-    }));
-
-    const { data, error } = await nhostQuery(`
-        mutation UpdateOrder($id: bigint!, $total: numeric, $items: [order_items_insert_input!]!) {
-            update_orders_by_pk(pk_columns: {id: $id}, _set: {total: $total}) {
-                id
-            }
-            delete_order_items(where: {order_id: {_eq: $id}}) {
-                affected_rows
-            }
-            insert_order_items(objects: $items) {
-                affected_rows
-            }
-        }
-    `, {
-        id,
-        total: total_amount,
-        items: formattedItems
-    });
-
-    if (error) {
-        console.warn("Nhost updateOrder failed, updating locally.");
-        const local = JSON.parse(localStorage.getItem('mockOrders') || '[]');
-        const idx = local.findIndex(o => String(o.id) === String(id));
-        if (idx !== -1) {
-            local[idx] = { ...local[idx], ...updates, total: total_amount };
-            localStorage.setItem('mockOrders', JSON.stringify(local));
-        }
-        return { data: { id, ...updates }, error: null };
-    }
-
-    return { data: { id, ...updates }, error: null };
+    const { id: _, ...changes } = updates;
+    const { data, error } = await supabase.from('orders').update(changes).eq('id', id).select().single();
+    if (!error && data) return { data, error: null };
+    return { data: null, error: 'Order not found' };
 };
 
 export const payOrder = async (id, cashierInfo) => {
-    const { data: orderData, error: fetchErr } = await nhostQuery(`
-        query GetOrderTable($id: bigint!) {
-            orders_by_pk(id: $id) {
-                table_id
-            }
-        }
-    `, { id });
+    // 1. Update order status
+    const { data: orderData, error: fetchErr } = await supabase.from('orders').select('*').eq('id', id).single();
+    if (fetchErr || !orderData) return { data: null, error: 'Order not found' };
 
-    if (fetchErr) return { data: null, error: fetchErr };
+    await updateOrder(id, { status: 'completed' });
 
-    const table_id = orderData?.orders_by_pk?.table_id;
+    // 2. Create Sale
+    const salePayload = {
+        order_id: id,
+        total_amount: orderData.total,
+        cashier_id: cashierInfo?.id || null,
+        cashier_name: cashierInfo?.name || 'Unknown',
+        items: orderData.items,
+        created_at: new Date().toISOString()
+    };
 
-    const { data, error } = await nhostQuery(`
-        mutation PayOrder($id: bigint!, $payment_method: String!, $table_id: bigint, $updateTable: Boolean!) {
-            update_orders_by_pk(pk_columns: {id: $id}, _set: {status: "paid", payment_method: $payment_method, paid_at: "now()"}) {
-                id
-                table_id
-                status
-                payment_method
-            }
-            update_tables(where: {id: {_eq: $table_id}}, _set: {status: "available"}) @include(if: $updateTable) {
-                affected_rows
-            }
-        }
-    `, {
-        id,
-        payment_method: cashierInfo?.payment_method || 'cash',
-        table_id: table_id || null,
-        updateTable: !!table_id
-    });
-
-    return { data: data?.update_orders_by_pk, error };
+    const { data, error } = await supabase.from('sales').insert([salePayload]).select().single();
+    if (!error && data) return { data, error: null };
+    
+    return { data: salePayload, error: null };
 };
 
-// --- Sales ---
 export const getSales = async () => {
-    const { data, error } = await nhostQuery(`
-        query GetPaidOrders {
-            orders(where: {status: {_eq: "paid"}}, order_by: {created_at: desc}) {
-                id
-                table_id
-                status
-                total
-                payment_method
-                cashier_id
-                created_at
-                paid_at
-                order_items {
-                    product_id
-                    quantity
-                    price
-                    product {
-                        name
-                    }
-                    products {
-                        name
-                    }
-                }
-            }
-        }
-    `);
-
-    const localSales = JSON.parse(localStorage.getItem('mockSales') || '[]');
-
-    if (!error && data?.orders) {
-        const formatted = data.orders.map(s => {
-            let cName = s.cashier_name;
-            if (!cName) {
-                const localMatch = localSales.find(ms => ms.id === s.id);
-                cName = localMatch?.cashier_name || '-';
-            }
-            return {
-                ...s,
-                cashier_name: cName,
-                total_amount: Number(s.total) || 0,
-                items: (s.order_items || []).map(oi => {
-                    const prod = oi.products || oi.product;
-                    return {
-                        product_id: oi.product_id,
-                        quantity: oi.quantity,
-                        price: oi.price,
-                        name: prod?.name
-                    };
-                })
-            };
-        });
-        // Merge with any local-only sales not in nhost
-        const nhostIds = new Set(formatted.map(s => String(s.id)));
-        const localOnly = localSales.filter(s => !nhostIds.has(String(s.id)));
-        const merged = [...formatted, ...localOnly].sort((a, b) =>
-            new Date(b.paid_at || b.created_at) - new Date(a.paid_at || a.created_at)
-        );
-        return { data: merged, error: null };
-    }
-
-    // Fallback: use localStorage sales only
-    console.warn('Nhost unavailable, using localStorage sales.');
-    return { data: localSales, error: null };
+    const { data, error } = await supabase.from('sales').select('*').order('created_at', { ascending: false });
+    if (!error && data) return { data, error: null };
+    return { data: [], error: null };
 };
 
 // --- Expenses ---
-export const fetchExpenses = async () => {
-    // Attempt local API get if running in local backend dev environment
-    try {
-        const response = await fetch('/api/expenses');
-        if (response.ok) {
-            const data = await response.json();
-            return { data };
-        }
-    } catch (e) {
-        // Fall back to Nhost or localStorage
-    }
+const EXPENSES_KEY = 'mockExpenses';
+const getLocalExpenses = () => JSON.parse(localStorage.getItem(EXPENSES_KEY) || '[]');
+const saveLocalExpenses = (list) => localStorage.setItem(EXPENSES_KEY, JSON.stringify(list));
 
-    const { data, error } = await nhostQuery(`
-        query GetExpenses {
-            expenses(order_by: {created_at: desc}) {
-                id
-                description
-                amount
-                category
-                created_at
-            }
-        }
-    `);
-    
-    if (error) {
-        console.warn("Nhost expenses failed, using local storage fallback:", error);
-        const mockExpenses = JSON.parse(localStorage.getItem('mockExpenses') || '[]');
-        return { data: mockExpenses, error: null };
+export const fetchExpenses = async () => {
+    const { data, error } = await supabase.from('expenses').select('*').order('created_at', { ascending: false });
+    if (!error && data) {
+        saveLocalExpenses(data);
+        return { data, error: null };
     }
-    return { data: data?.expenses || [], error };
+    return { data: getLocalExpenses(), error: null };
 };
 
 export const createExpense = async (expenseData) => {
-    // Attempt local API post
-    try {
-        const response = await fetch('/api/expenses', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(expenseData)
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return { data };
-        }
-    } catch (e) {
-        // Fall back to Nhost or localStorage
+    const { data, error } = await supabase.from('expenses').insert([expenseData]).select().single();
+    if (!error && data) {
+        const local = getLocalExpenses();
+        local.unshift(data);
+        saveLocalExpenses(local);
+        return { data, error: null };
     }
-
-    const { data, error } = await nhostQuery(`
-        mutation CreateExpense($description: String!, $amount: numeric!, $category: String!) {
-            insert_expenses_one(object: {
-                description: $description,
-                amount: $amount,
-                category: $category
-            }) {
-                id
-                description
-                amount
-                category
-                created_at
-            }
-        }
-    `, expenseData);
-
-    if (error) {
-        console.warn("Nhost createExpense failed, using local storage fallback:", error);
-        const mockExpenses = JSON.parse(localStorage.getItem('mockExpenses') || '[]');
-        const newExpense = {
-            id: Date.now(),
-            description: expenseData.description,
-            amount: Number(expenseData.amount),
-            category: expenseData.category,
-            created_at: new Date().toISOString()
-        };
-        mockExpenses.unshift(newExpense);
-        localStorage.setItem('mockExpenses', JSON.stringify(mockExpenses));
-        return { data: newExpense, error: null };
-    }
-    return { data: data?.insert_expenses_one, error };
+    const local = getLocalExpenses();
+    const newExpense = { ...expenseData, id: Date.now(), created_at: new Date().toISOString() };
+    local.unshift(newExpense);
+    saveLocalExpenses(local);
+    return { data: newExpense, error: null };
 };
 
 export const deleteExpense = async (id) => {
-    // Attempt local API delete
-    try {
-        const response = await fetch(`/api/expenses/${id}`, { method: 'DELETE' });
-        if (response.ok) {
-            const data = await response.json();
-            return { data };
-        }
-    } catch (e) {
-        // Fall back to Nhost or localStorage
-    }
-
-    const { data, error } = await nhostQuery(`
-        mutation DeleteExpense($id: bigint!) {
-            delete_expenses_by_pk(id: $id) {
-                id
-            }
-        }
-    `, { id });
-
-    if (error) {
-        console.warn("Nhost deleteExpense failed, using local storage fallback:", error);
-        const mockExpenses = JSON.parse(localStorage.getItem('mockExpenses') || '[]');
-        const filtered = mockExpenses.filter(e => String(e.id) !== String(id));
-        localStorage.setItem('mockExpenses', JSON.stringify(filtered));
-        return { data: { id }, error: null };
-    }
-    return { data: data?.delete_expenses_by_pk, error };
+    const { data, error } = await supabase.from('expenses').delete().eq('id', id).select().single();
+    if (!error && data) return { data, error: null };
+    return { data: { id }, error: null };
 };
 
-// Legacy API Object compatibility
 export const api = {
-    get: async (url) => {
-        if (url === '/products') return fetchProducts();
-        if (url === '/tables') return getTables();
-        if (url === '/captains') return getCaptains();
-        if (url === '/cashiers') return getCashiers();
-        if (url === '/orders') return getOrders();
-        if (url === '/debts') return fetchDebts();
-        if (url === '/expenses') return fetchExpenses();
-        console.error(`API GET ${url} not implemented`);
-        return { data: [] };
-    },
-    delete: async (url) => {
-        const tableMatch = url.match(/\/tables\/(\d+)/);
-        if (tableMatch) return deleteTable(tableMatch[1]);
-
-        const productMatch = url.match(/\/products\/(\d+)/);
-        if (productMatch) return deleteProduct(productMatch[1]);
-
-        const cashierMatch = url.match(/\/cashiers\/(\d+)/);
-        if (cashierMatch) return deleteCashier(cashierMatch[1]);
-
-        const captainMatch = url.match(/\/captains\/(\d+)/);
-        if (captainMatch) return deleteCaptain(captainMatch[1]);
-
-        const debtMatch = url.match(/\/debts\/(\d+)/);
-        if (debtMatch) return deleteDebt(debtMatch[1]);
-
-        const expenseMatch = url.match(/\/expenses\/(\d+)/);
-        if (expenseMatch) return deleteExpense(expenseMatch[1]);
-
-        return { data: {} };
-    },
-    put: async (url, data) => {
-        const productMatch = url.match(/\/products\/(\d+)/);
-        if (productMatch) return updateProduct(productMatch[1], data);
-
-        const cashierMatch = url.match(/\/cashiers\/(\d+)/);
-        if (cashierMatch) return updateCashier(cashierMatch[1], data);
-
-        const captainMatch = url.match(/\/captains\/(\d+)/);
-        if (captainMatch) return updateCaptain(captainMatch[1], data);
-
-        const debtMatch = url.match(/\/debts\/(\d+)/);
-        if (debtMatch) return updateDebt(debtMatch[1], data);
-
-        return { data: {} };
-    },
-    post: async (url, data) => {
-        if (url === '/orders') return createOrder(data);
-        if (url === '/captains') return createCaptain(data);
-        if (url === '/cashiers') return createCashier(data);
-        if (url === '/tables') return createTable(data);
-        if (url === '/products') return createProduct(data);
-        if (url === '/debts') return createDebt(data);
-        if (url === '/expenses') return createExpense(data);
-
-        const payMatch = url.match(/\/orders\/(\d+)\/pay/);
-        if (payMatch) return payOrder(payMatch[1], data);
-
-        const assignMatch = url.match(/\/tables\/(\d+)\/assign/);
-        if (assignMatch) return assignCaptain(assignMatch[1], data.captain_id);
-
-        console.error(`API POST ${url} not implemented`);
-        return { data: {} };
-    }
+    getProducts: fetchProducts,
+    getOrders,
+    getTables,
+    getCaptains,
+    getCashiers
 };
-
-export default api;
