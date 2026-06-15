@@ -161,7 +161,7 @@ const MainLayout = () => {
             if (path.startsWith('/dashboard')) return currentUser.permissions.dashboard_page === true;
             if (path.startsWith('/admin/debts')) return currentUser.permissions.debts_page === true;
             if (path.startsWith('/cashier')) return currentUser.permissions.cashier_page === true;
-            if (path.startsWith('/warehouse')) return currentUser.permissions.warehouse_page === true;
+            if (path.startsWith('/warehouse') || path.startsWith('/incoming-medicines')) return currentUser.permissions.warehouse_page === true;
             if (path.startsWith('/admin/expenses')) return currentUser.permissions.expenses_page === true;
             if (path.startsWith('/admin/products')) return currentUser.permissions.products_page === true;
             if (path.startsWith('/discounts')) return currentUser.permissions.discounts_page === true;
@@ -221,7 +221,8 @@ const MainLayout = () => {
                             { path: '/dashboard', label: 'Dashboard', labelText: 'داشبۆرد' },
                             { path: '/admin/debts', label: 'Reservation', labelText: t('menu.debts') || "Reservation" },
                             { path: '/cashier', label: 'Menu', labelText: t('menu.cashier') || "Menu" },
-                            { path: '/warehouse', label: 'Warehouse', labelText: 'کۆگا' },
+                            { path: '/incoming-medicines', label: 'Incoming', labelText: 'دەرمانی هاتوو' },
+                            { path: '/warehouse', label: 'Warehouse', labelText: 'تۆماری دەرمان' },
                             { path: '/admin/expenses', label: 'Accounting', labelText: t('menu.expenses') || "Accounting" }
                         ].filter(tab => hasPermission(tab.path)).map((tab) => {
                             const isActive = location.pathname.startsWith(tab.path);
@@ -282,6 +283,17 @@ const MainLayout = () => {
                                         </Link>
                                     )}
                                     
+                                    {hasPermission('/incoming-medicines') && (
+                                        <Link
+                                            to="/incoming-medicines"
+                                            onClick={() => setIsProfileDropdownOpen(false)}
+                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                                        >
+                                            <Truck size={18} />
+                                            <span>دەرمانی هاتوو</span>
+                                        </Link>
+                                    )}
+
                                     {hasPermission('/warehouse') && (
                                         <Link
                                             to="/warehouse"
@@ -289,7 +301,7 @@ const MainLayout = () => {
                                             className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                                         >
                                             <Warehouse size={18} />
-                                            <span>کۆگا</span>
+                                            <span>تۆماری دەرمان</span>
                                         </Link>
                                     )}
 
@@ -450,7 +462,7 @@ const MainLayout = () => {
             <main className={`flex-1 transition-all duration-300 ${
                 location.pathname === '/cashier'
                     ? 'overflow-hidden'
-                    : ['/admin/products', '/admin/expenses', '/warehouse'].includes(location.pathname)
+                    : ['/admin/products', '/admin/expenses', '/incoming-medicines', '/warehouse'].includes(location.pathname)
                         ? 'overflow-hidden p-4 md:p-6'
                         : 'overflow-y-auto p-4 md:p-6 pb-20'
             }`}>

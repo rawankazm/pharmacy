@@ -29,6 +29,7 @@ const SettingsPage = lazyWithRetry(() => import('./pages/SettingsPage'));
 const DebtPage = lazyWithRetry(() => import('./pages/DebtPage'));
 const ExpensesPage = lazyWithRetry(() => import('./pages/ExpensesPage'));
 const WarehousePage = lazyWithRetry(() => import('./pages/WarehousePage'));
+const IncomingMedicinesPage = lazyWithRetry(() => import('./pages/IncomingMedicinesPage'));
 const DashboardPage = lazyWithRetry(() => import('./pages/DashboardPage'));
 const DiscountsPage = lazyWithRetry(() => import('./pages/DiscountsPage'));
 const ReturnsPage = lazyWithRetry(() => import('./pages/ReturnsPage'));
@@ -85,6 +86,7 @@ function App() {
                 <Route path="admin/expenses" element={<ExpensesPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="warehouse" element={<WarehousePage />} />
+                <Route path="incoming-medicines" element={<IncomingMedicinesPage />} />
                 <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="discounts" element={<DiscountsPage />} />
                 <Route path="returns" element={<ReturnsPage />} />
