@@ -87,11 +87,11 @@ const MainLayout = () => {
         { path: '/settings', icon: Gear, label: t('menu.settings') },
     ];
 
-    const [appName, setAppName] = React.useState(localStorage.getItem('appName') || 'MarketPOS');
+    const [appName, setAppName] = React.useState(localStorage.getItem('appName') || 'PharmacyPOS');
 
     React.useEffect(() => {
         const handleSettingsChange = () => {
-            setAppName(localStorage.getItem('appName') || 'MarketPOS');
+            setAppName(localStorage.getItem('appName') || 'PharmacyPOS');
         };
         window.addEventListener('app-settings-changed', handleSettingsChange);
         return () => window.removeEventListener('app-settings-changed', handleSettingsChange);
@@ -134,14 +134,14 @@ const MainLayout = () => {
 
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = React.useState(false);
     const [currentUser, setCurrentUser] = React.useState(() => {
-        const stored = sessionStorage.getItem('activeCashier');
-        return stored ? JSON.parse(stored) : { name: 'Casey Kaspol' };
+        const stored = sessionStorage.getItem('activePharmacist');
+        return stored ? JSON.parse(stored) : { name: 'Admin Pharmacist' };
     });
 
     React.useEffect(() => {
         const handleAuthChange = () => {
-            const stored = sessionStorage.getItem('activeCashier');
-            setCurrentUser(stored ? JSON.parse(stored) : { name: 'Casey Kaspol' });
+            const stored = sessionStorage.getItem('activePharmacist');
+            setCurrentUser(stored ? JSON.parse(stored) : { name: 'Admin Pharmacist' });
         };
         window.addEventListener('admin-auth-changed', handleAuthChange);
         window.addEventListener('storage', handleAuthChange);
@@ -419,7 +419,7 @@ const MainLayout = () => {
                                     <button
                                         onClick={() => {
                                             setIsProfileDropdownOpen(false);
-                                            sessionStorage.removeItem('activeCashier');
+                                            sessionStorage.removeItem('activePharmacist');
                                             window.location.reload();
                                         }}
                                         className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-650 hover:bg-red-50 dark:hover:bg-red-955/20 text-left rtl:text-right font-bold"

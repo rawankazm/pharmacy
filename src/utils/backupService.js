@@ -1,18 +1,20 @@
 import { dbData } from '../db';
-import { supabase } from '../supabase';
+import { nhostQuery } from '../nhost';
 
 export const generateBackupData = async () => {
     try {
-        const [products, tables, captains, cashiers, orders, sales, debts, expenses] = await Promise.all([
-            supabase.from('products').select('*'),
-            supabase.from('tables').select('*'),
-            supabase.from('captains').select('*'),
-            supabase.from('cashiers').select('*'),
-            supabase.from('orders').select('*'),
-            supabase.from('sales').select('*'),
-            supabase.from('debts').select('*'),
-            supabase.from('expenses').select('*')
-        ]);
+        const { data, error } = await nhostQuery(`
+            query GetBackupData {
+                products { id name category price image_url description name_ckb barcode is_available created_at }
+                tables { id name captain_id status code_pin created_at }
+                captains { id name code created_at }
+                cashiers { id name code created_at }
+                orders { id table_id status total payment_method cashier_id created_at paid_at void_reason }
+                order_items { id order_id product_id quantity price note created_at }
+            }
+        `);
+
+        if (error) throw new Error(error);
 
         return {
             version: '2.0',
@@ -21,20 +23,18 @@ export const generateBackupData = async () => {
                 appName: localStorage.getItem('appName'),
                 adminPin: localStorage.getItem('adminPin'),
                 supabaseData: {
-                    products: products.data || [],
-                    tables: tables.data || [],
-                    captains: captains.data || [],
-                    cashiers: cashiers.data || [],
-                    orders: orders.data || [],
-                    sales: sales.data || [],
-                    debts: debts.data || [],
-                    expenses: expenses.data || []
+                    products: data.products || [],
+                    tables: data.tables || [],
+                    captains: data.captains || [],
+                    cashiers: data.cashiers || [],
+                    orders: data.orders || [],
+                    order_items: data.order_items || []
                 }
             }
         };
     } catch (e) {
         console.error("Backup generation failed", e);
-        return null;
+        return null; // Ensure fallback
     }
 };
 
@@ -48,7 +48,7 @@ export const downloadBackup = async () => {
         const a = document.createElement('a');
         a.href = url;
         const dateStr = new Date().toISOString().split('T')[0];
-        a.download = `Pharmacy_Backup_${dateStr}.json`;
+        a.download = `MarketPOS_Backup_${dateStr}.json`;
         document.body.appendChild(a);
         a.click();
         setTimeout(() => {
@@ -56,6 +56,7 @@ export const downloadBackup = async () => {
             document.body.removeChild(a);
         }, 100);
 
+        // Record backup time
         localStorage.setItem('last_auto_backup', new Date().toISOString());
         return true;
     } catch (e) {
@@ -69,33 +70,82 @@ export const restoreBackup = async (backupData) => {
         const { data } = backupData;
         if (!data) throw new Error("Invalid backup format");
 
+        // Restore LocalStorage configurations
         if (data.appName) localStorage.setItem('appName', data.appName);
         if (data.adminPin) localStorage.setItem('adminPin', data.adminPin);
 
+        // Restore Nhost/Hasura data
         if (data.supabaseData) {
             const sd = data.supabaseData;
 
-            // Clear tables
-            await Promise.all([
-                supabase.from('sales').delete().neq('id', 0),
-                supabase.from('orders').delete().neq('id', 0),
-                supabase.from('debts').delete().neq('id', 0),
-                supabase.from('expenses').delete().neq('id', 0),
-                supabase.from('tables').delete().neq('id', 0),
-                supabase.from('captains').delete().neq('id', 0),
-                supabase.from('cashiers').delete().neq('id', 0),
-                supabase.from('products').delete().neq('id', 0)
-            ]);
+            // Clear existing data. Clear child tables first to bypass foreign key constraints
+            await nhostQuery(`
+                mutation ClearAllForRestore {
+                    delete_order_items(where: {}) { affected_rows }
+                    delete_orders(where: {}) { affected_rows }
+                    delete_tables(where: {}) { affected_rows }
+                    delete_captains(where: {}) { affected_rows }
+                    delete_cashiers(where: {}) { affected_rows }
+                    delete_products(where: {}) { affected_rows }
+                }
+            `);
 
-            // Restore
-            if (sd.products?.length) await supabase.from('products').insert(sd.products.map(({ created_at, ...p }) => p));
-            if (sd.captains?.length) await supabase.from('captains').insert(sd.captains.map(({ created_at, ...c }) => c));
-            if (sd.cashiers?.length) await supabase.from('cashiers').insert(sd.cashiers.map(({ created_at, ...c }) => c));
-            if (sd.tables?.length) await supabase.from('tables').insert(sd.tables.map(({ created_at, ...t }) => t));
-            if (sd.orders?.length) await supabase.from('orders').insert(sd.orders.map(({ created_at, ...o }) => o));
-            if (sd.sales?.length) await supabase.from('sales').insert(sd.sales.map(({ created_at, ...s }) => s));
-            if (sd.debts?.length) await supabase.from('debts').insert(sd.debts.map(({ created_at, ...d }) => d));
-            if (sd.expenses?.length) await supabase.from('expenses').insert(sd.expenses.map(({ created_at, ...e }) => e));
+            // Re-insert backed up data (Independent tables first, then dependent tables)
+            if (sd.products?.length) {
+                await nhostQuery(`
+                    mutation InsertProducts($objects: [products_insert_input!]!) {
+                        insert_products(objects: $objects) { affected_rows }
+                    }
+                `, { objects: sd.products.map(({ created_at, ...p }) => p) });
+            }
+            if (sd.captains?.length) {
+                await nhostQuery(`
+                    mutation InsertCaptains($objects: [captains_insert_input!]!) {
+                        insert_captains(objects: $objects) { affected_rows }
+                    }
+                `, { objects: sd.captains.map(({ created_at, ...c }) => c) });
+            }
+            if (sd.cashiers?.length) {
+                await nhostQuery(`
+                    mutation InsertCashiers($objects: [cashiers_insert_input!]!) {
+                        insert_cashiers(objects: $objects) { affected_rows }
+                    }
+                `, { objects: sd.cashiers.map(({ created_at, ...c }) => c) });
+            }
+            if (sd.tables?.length) {
+                await nhostQuery(`
+                    mutation InsertTables($objects: [tables_insert_input!]!) {
+                        insert_tables(objects: $objects) { affected_rows }
+                    }
+                `, { objects: sd.tables.map(({ created_at, ...t }) => t) });
+            }
+            if (sd.orders?.length) {
+                await nhostQuery(`
+                    mutation InsertOrders($objects: [orders_insert_input!]!) {
+                        insert_orders(objects: $objects) { affected_rows }
+                    }
+                `, { objects: sd.orders.map(({ created_at, paid_at, ...o }) => o) });
+            }
+            if (sd.order_items?.length) {
+                await nhostQuery(`
+                    mutation InsertOrderItems($objects: [order_items_insert_input!]!) {
+                        insert_order_items(objects: $objects) { affected_rows }
+                    }
+                `, { objects: sd.order_items.map(({ created_at, ...oi }) => oi) });
+            }
+        } else {
+            // Legacy fallback restore if old backup uploaded
+            if (data.mockProducts) localStorage.setItem('mockProducts', JSON.stringify(data.mockProducts));
+            if (data.mockTables) localStorage.setItem('mockTables', JSON.stringify(data.mockTables));
+            if (data.mockCaptains) localStorage.setItem('mockCaptains', JSON.stringify(data.mockCaptains));
+            if (data.mockCashiers) localStorage.setItem('mockCashiers', JSON.stringify(data.mockCashiers));
+            if (data.mockOrders) localStorage.setItem('mockOrders', JSON.stringify(data.mockOrders));
+            if (data.mockSales) localStorage.setItem('mockSales', JSON.stringify(data.mockSales));
+            if (data.shishaCategories) localStorage.setItem('shisha_categories', JSON.stringify(data.shishaCategories));
+
+            if (data.dbProducts && Array.isArray(data.dbProducts)) {
+                await dbData.saveAll(data.dbProducts);
+            }
         }
 
         return true;
@@ -107,24 +157,34 @@ export const restoreBackup = async (backupData) => {
 
 export const clearDatabase = async () => {
     try {
-        await Promise.all([
-            supabase.from('sales').delete().neq('id', 0),
-            supabase.from('orders').delete().neq('id', 0),
-            supabase.from('debts').delete().neq('id', 0),
-            supabase.from('expenses').delete().neq('id', 0),
-            supabase.from('tables').delete().neq('id', 0),
-            supabase.from('captains').delete().neq('id', 0),
-            supabase.from('cashiers').delete().neq('id', 0),
-            supabase.from('products').delete().neq('id', 0)
-        ]);
+        const { error } = await nhostQuery(`
+            mutation ClearDatabase {
+                delete_order_items(where: {}) { affected_rows }
+                delete_orders(where: {}) { affected_rows }
+                delete_tables(where: {}) { affected_rows }
+                delete_captains(where: {}) { affected_rows }
+                delete_cashiers(where: {}) { affected_rows }
+                delete_products(where: {}) { affected_rows }
+            }
+        `);
 
+        if (error) throw new Error(error);
+
+        // Attempt IndexedDB clear silently
         try {
             await dbData.clear();
         } catch (dbErr) {
             console.warn("Could not clear IndexedDB:", dbErr);
         }
 
-        localStorage.clear();
+        localStorage.removeItem('mockOrders');
+        localStorage.removeItem('mockSales');
+        localStorage.removeItem('mockVoids');
+        localStorage.removeItem('shisha_categories');
+        localStorage.removeItem('mockProducts');
+        localStorage.removeItem('mockTables');
+        localStorage.removeItem('mockCaptains');
+        localStorage.removeItem('mockCashiers');
 
         return true;
     } catch (e) {

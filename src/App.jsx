@@ -2,7 +2,6 @@ import React, { Suspense, lazy, useEffect } from 'react';
 import { downloadBackup } from './utils/backupService';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './layout/MainLayout';
-import PharmacyLayout from './layout/PharmacyLayout';
 import { SocketProvider } from './context/SocketContext';
 import { Toaster } from 'react-hot-toast';
 
@@ -10,6 +9,7 @@ import { KeyboardProvider } from './context/KeyboardContext';
 import VirtualKeyboard from './components/VirtualKeyboard';
 
 // Lazy load page components for better performance
+// Helper to auto-reload page if a chunk fails to load (e.g. new deployment)
 const lazyWithRetry = (componentImport) =>
   lazy(async () => {
     try {
@@ -29,8 +29,7 @@ const SettingsPage = lazyWithRetry(() => import('./pages/SettingsPage'));
 const DebtPage = lazyWithRetry(() => import('./pages/DebtPage'));
 const ExpensesPage = lazyWithRetry(() => import('./pages/ExpensesPage'));
 const WarehousePage = lazyWithRetry(() => import('./pages/WarehousePage'));
-const PharmacyDashboard = lazyWithRetry(() => import('./pages/PharmacyDashboard'));
-const DashboardPage = lazyWithRetry(() => import('./pages/DashboardPage')); // Keep original just in case
+const DashboardPage = lazyWithRetry(() => import('./pages/DashboardPage'));
 const DiscountsPage = lazyWithRetry(() => import('./pages/DiscountsPage'));
 const ReturnsPage = lazyWithRetry(() => import('./pages/ReturnsPage'));
 const SuppliersPage = lazyWithRetry(() => import('./pages/SuppliersPage'));
@@ -53,13 +52,17 @@ function App() {
       if (autoBackup) {
         const last = localStorage.getItem('last_auto_backup');
         const now = Date.now();
+        // Default 24 hours
         if (!last || (now - new Date(last).getTime() > 24 * 60 * 60 * 1000)) {
+          // Trigger backup
           downloadBackup();
         }
       }
     };
 
+    // Check on load
     checkBackup();
+    // Check every hour
     const interval = setInterval(checkBackup, 60 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
@@ -71,16 +74,18 @@ function App() {
         <BrowserRouter>
           <Suspense fallback={<PageLoader />}>
             <Routes>
-              {/* Pharmacy Dashboard Wrapper */}
-              <Route path="/" element={<PharmacyLayout />}>
-                <Route index element={<Navigate to="/dashboard" replace />} />
-                <Route path="dashboard" element={<PharmacyDashboard />} />
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<Navigate to="/cashier" replace />} />
+
+                {/* Cashier Routes */}
                 <Route path="cashier" element={<CashierPage />} />
+
                 <Route path="admin/products" element={<AdminProducts />} />
                 <Route path="admin/debts" element={<DebtPage />} />
                 <Route path="admin/expenses" element={<ExpensesPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="warehouse" element={<WarehousePage />} />
+                <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="discounts" element={<DiscountsPage />} />
                 <Route path="returns" element={<ReturnsPage />} />
                 <Route path="suppliers" element={<SuppliersPage />} />
