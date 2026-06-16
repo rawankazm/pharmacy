@@ -176,61 +176,61 @@ const IncomingMedicinesPage = () => {
                             </h2>
                             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500">ناوی مەندوب / کۆمپانیا</label>
+                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400">ناوی مەندوب / کۆمپانیا</label>
                                     <input 
                                         type="text" 
                                         value={supplierName}
                                         onChange={e => setSupplierName(e.target.value)}
-                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm"
+                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                                         placeholder="نموونە: کۆمپانیای ئاوامەد"
                                     />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500">ژمارەی وەسڵ</label>
+                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400">ژمارەی وەسڵ</label>
                                     <input 
                                         type="text" 
                                         value={receiptNumber}
                                         onChange={e => setReceiptNumber(e.target.value)}
-                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm"
+                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                                         placeholder="0001234"
                                     />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500">بەرواری وەرگرتن</label>
+                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400">بەرواری وەرگرتن</label>
                                     <input 
                                         type="date" 
                                         value={receiptDate}
                                         onChange={e => setReceiptDate(e.target.value)}
-                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm"
+                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm text-slate-800 dark:text-slate-100"
                                     />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500">بڕی کۆی پارەی وەسڵ</label>
+                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400">بڕی کۆی پارەی وەسڵ</label>
                                     <input 
                                         type="number" 
                                         value={totalAmount}
                                         onChange={e => setTotalAmount(e.target.value)}
-                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm"
+                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                                         placeholder="500,000"
                                     />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500">جۆری دراو</label>
+                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400">جۆری دراو</label>
                                     <select 
                                         value={currency}
                                         onChange={e => setCurrency(e.target.value)}
-                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm"
+                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm text-slate-800 dark:text-slate-100"
                                     >
                                         <option value="IQD">دینار (IQD)</option>
                                         <option value="USD">دۆلار (USD)</option>
                                     </select>
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-slate-500">شێوازی مامەڵە</label>
+                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400">شێوازی مامەڵە</label>
                                     <select 
                                         value={paymentType}
                                         onChange={e => setPaymentType(e.target.value)}
-                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm"
+                                        className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-emerald-500 transition-colors text-sm text-slate-800 dark:text-slate-100"
                                     >
                                         <option value="cash">نەختینە (کاش)</option>
                                         <option value="debt">قەرز (ماوە)</option>
@@ -248,7 +248,7 @@ const IncomingMedicinesPage = () => {
                             {/* Add Item Form */}
                             <form onSubmit={handleAddItem} className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200/60 dark:border-slate-700/60 mb-4 flex flex-wrap gap-3 items-end relative">
                                 <div className="flex-1 min-w-[200px] relative">
-                                    <label className="text-xs font-bold text-slate-500 mb-1 block">ناوی دەرمان</label>
+                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 block">ناوی دەرمان</label>
                                     <input 
                                         type="text" 
                                         value={newItemName}
@@ -258,11 +258,11 @@ const IncomingMedicinesPage = () => {
                                         }}
                                         onFocus={() => setShowSuggestions(true)}
                                         onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                                        className="w-full p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-blue-500 text-sm"
+                                        className="w-full p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-blue-500 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                                         placeholder="ناوی دەرمان بنووسە..."
                                     />
                                     {showSuggestions && newItemName && filteredProducts.length > 0 && (
-                                        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl z-50 overflow-hidden">
+                                        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl z-50 overflow-hidden text-slate-800 dark:text-slate-100">
                                             {filteredProducts.map(p => (
                                                 <div 
                                                     key={p.id}
@@ -271,7 +271,7 @@ const IncomingMedicinesPage = () => {
                                                         setNewItemName(p.name_ckb || p.name);
                                                         setShowSuggestions(false);
                                                     }}
-                                                    className="p-2 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm"
+                                                    className="p-2 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer text-sm text-slate-800 dark:text-slate-200"
                                                 >
                                                     {p.name_ckb || p.name}
                                                 </div>
@@ -280,32 +280,32 @@ const IncomingMedicinesPage = () => {
                                     )}
                                 </div>
                                 <div className="w-24">
-                                    <label className="text-xs font-bold text-slate-500 mb-1 block">ژمارە (دانە)</label>
+                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 block">ژمارە (دانە)</label>
                                     <input 
                                         type="number" 
                                         value={newItemQty}
                                         onChange={e => setNewItemQty(e.target.value)}
-                                        className="w-full p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-blue-500 text-sm"
+                                        className="w-full p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-blue-500 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                                         placeholder="10"
                                     />
                                 </div>
                                 <div className="w-32">
-                                    <label className="text-xs font-bold text-slate-500 mb-1 block">نرخی کڕینی تاک</label>
+                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 block">نرخی کڕینی تاک</label>
                                     <input 
                                         type="number" 
                                         value={newItemPiecePrice}
                                         onChange={e => setNewItemPiecePrice(e.target.value)}
-                                        className="w-full p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-blue-500 text-sm"
+                                        className="w-full p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-blue-500 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                                         placeholder="500"
                                     />
                                 </div>
                                 <div className="w-32">
-                                    <label className="text-xs font-bold text-slate-500 mb-1 block">نرخی پاکەت</label>
+                                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 block">نرخی پاکەت</label>
                                     <input 
                                         type="number" 
                                         value={newItemPackPrice}
                                         onChange={e => setNewItemPackPrice(e.target.value)}
-                                        className="w-full p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-blue-500 text-sm"
+                                        className="w-full p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg outline-none focus:border-blue-500 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                                         placeholder="ئارەزوومەندانە"
                                     />
                                 </div>
@@ -317,7 +317,7 @@ const IncomingMedicinesPage = () => {
                             {/* Table */}
                             <div className="flex-1 overflow-auto border border-slate-200 dark:border-slate-700 rounded-xl">
                                 <table className="w-full text-sm text-right">
-                                    <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 font-bold sticky top-0">
+                                    <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-bold sticky top-0">
                                         <tr>
                                             <th className="p-3">#</th>
                                             <th className="p-3">ناو</th>
@@ -368,8 +368,8 @@ const IncomingMedicinesPage = () => {
 
                     {/* Right Column: History */}
                     <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm overflow-y-auto max-h-[85vh]">
-                        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                            <ClockCounterClockwise size={20} className="text-slate-500" /> مێژووی وەسڵەکان
+                        <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                            <ClockCounterClockwise size={20} className="text-slate-500 dark:text-slate-400" /> مێژووی وەسڵەکان
                         </h2>
                         
                         <div className="space-y-3">
@@ -390,7 +390,7 @@ const IncomingMedicinesPage = () => {
                                                         : <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 rounded ml-2">نەختینە</span>
                                                     }
                                                 </h3>
-                                                <p className="text-xs text-slate-500 font-medium">{r.supplierName}</p>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{r.supplierName}</p>
                                             </div>
                                             <div className="text-left">
                                                 <p className="font-black text-emerald-600 dark:text-emerald-400 text-sm">
