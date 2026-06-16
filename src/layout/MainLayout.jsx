@@ -190,12 +190,15 @@ const MainLayout = () => {
 
     return (
         <div className="flex flex-col h-screen overflow-hidden bg-[#f4f6f9] text-slate-800 transition-colors duration-300">
-            <div className="w-full bg-[#c0392b] text-white h-9 flex items-center justify-between px-3 text-xs select-none border-b border-red-800 z-50 flex-shrink-0">
-                <div className="flex items-center gap-2">
+            {/* Top Windows-style crimson titlebar with gradient & glass reflection */}
+            <div className="w-full bg-gradient-to-r from-[#c0392b] via-[#e74c3c] to-[#b83227] text-white h-9 flex items-center justify-between px-4 text-xs select-none border-b border-red-800/80 z-50 flex-shrink-0 relative overflow-hidden shadow-md">
+                {/* Sheen Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
+                <div className="flex items-center gap-2 relative z-10">
                     <LinkSimple size={14} className="text-emerald-400 font-bold" />
                     <span className="font-semibold uppercase tracking-wider text-[11px]">PHARMACY POS SYSTEM v1.0.0.1</span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 relative z-10">
                     <div className="flex items-center gap-2 pr-1">
                         <span onClick={() => toast.success('Minimize')} className="w-4 h-4 hover:bg-white/20 flex items-center justify-center rounded cursor-pointer text-[10px]">─</span>
                         <span onClick={toggleFullScreen} className="w-4 h-4 hover:bg-white/20 flex items-center justify-center rounded cursor-pointer text-[9px]">▢</span>
@@ -203,15 +206,19 @@ const MainLayout = () => {
                             if (window.confirm('Do you want to close the application?')) {
                                 window.close();
                             }
-                        }} className="w-4 h-4 hover:bg-red-650 flex items-center justify-center rounded cursor-pointer font-bold text-[9px]">✕</span>
+                        }} className="w-4 h-4 hover:bg-red-655 flex items-center justify-center rounded cursor-pointer font-bold text-[9px]">✕</span>
                     </div>
                 </div>
             </div>
 
+            {/* Layout container */}
             <div className="flex-1 flex flex-row overflow-hidden relative">
-                <aside className="w-64 bg-[#22252a] flex flex-col h-full z-40 flex-shrink-0 select-none text-slate-350 border-r border-slate-900/40">
-                    <div className="flex flex-col items-center py-6 border-b border-slate-750/30">
-                        <div className="w-16 h-16 rounded-full bg-[#5d60a6] flex items-center justify-center border-2 border-slate-600 overflow-hidden relative shadow-lg mb-3">
+                {/* Dark left sidebar with Glassmorphic effects */}
+                <aside className="w-64 bg-[#1a1d24]/95 backdrop-blur-md flex flex-col h-full z-40 flex-shrink-0 select-none text-slate-350 border-r border-white/5 relative">
+                    {/* Pharmacist profile box */}
+                    <div className="flex flex-col items-center py-6 border-b border-white/5">
+                        {/* Avatar */}
+                        <div className="w-16 h-16 rounded-full bg-[#5d60a6] flex items-center justify-center border-2 border-slate-500/80 overflow-hidden relative shadow-[0_0_15px_rgba(93,96,166,0.3)] mb-3 transition-transform duration-300 hover:scale-105">
                             <svg viewBox="0 0 32 32" className="w-12 h-12 text-slate-100 mt-2">
                                 <circle cx="16" cy="11" r="6" fill="#fcd34d" />
                                 <path d="M16 19c-5.523 0-10 4.477-10 10h20c0-5.523-4.477-10-10-10z" fill="#3b82f6" />
@@ -219,11 +226,12 @@ const MainLayout = () => {
                         </div>
                         <span className="text-white text-sm font-semibold tracking-wide capitalize">{currentUser?.name || 'admin'}</span>
                         <div className="flex items-center gap-1.5 mt-1">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
                             <span className="text-emerald-400 text-[10px] font-bold">• Online</span>
                         </div>
                     </div>
 
+                    {/* Navigation Menu */}
                     <nav className="flex-1 py-4 space-y-1 overflow-y-auto no-scrollbar">
                         {sidebarItems.filter(item => hasPermission(item.path)).map((item) => {
                             const isActive = location.pathname.startsWith(item.path);
@@ -232,10 +240,10 @@ const MainLayout = () => {
                                 <Link
                                     key={item.path}
                                     to={item.path}
-                                    className={`flex items-center gap-3 py-3.5 px-5 text-[13px] font-semibold transition-all relative ${
+                                    className={`flex items-center gap-3 py-3.5 px-5 text-[13px] font-semibold transition-all duration-300 relative ${
                                         isActive
-                                            ? 'text-white bg-[#1a1d22] font-bold border-l-[6px] border-emerald-500'
-                                            : 'text-slate-400 hover:text-white hover:bg-[#1a1d22]/50'
+                                            ? 'text-white bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-transparent font-bold border-l-[6px] border-emerald-500 shadow-[inset_1px_0_0_0_rgba(16,185,129,0.1)]'
+                                            : 'text-slate-400 hover:text-white hover:bg-white/5'
                                     }`}
                                 >
                                     <Icon size={18} className={isActive ? 'text-emerald-400' : 'text-slate-400'} />
@@ -244,6 +252,7 @@ const MainLayout = () => {
                             );
                         })}
 
+                        {/* Log out option */}
                         <button
                             onClick={() => {
                                 sessionStorage.removeItem('activePharmacist');
@@ -256,7 +265,8 @@ const MainLayout = () => {
                         </button>
                     </nav>
 
-                    <div className="p-3 border-t border-slate-800 bg-[#1a1d22] flex items-center justify-between gap-2">
+                    {/* Footer / Settings */}
+                    <div className="p-3 border-t border-white/5 bg-[#171a20]/90 backdrop-blur-md flex items-center justify-between gap-2">
                         <LanguageSwitcher />
                         <button
                             onClick={toggleDarkMode}
@@ -268,8 +278,10 @@ const MainLayout = () => {
                     </div>
                 </aside>
 
+                {/* Right content panel */}
                 <div className="flex-1 flex flex-col h-full bg-[#f4f6f9] dark:bg-[#030712] overflow-hidden">
-                    <header className="h-14 bg-white dark:bg-[#080d1a] border-b border-slate-200 dark:border-slate-900/60 flex items-center justify-between px-6 select-none shadow-sm flex-shrink-0">
+                    {/* Header bar with glassmorphic filter */}
+                    <header className="h-14 bg-white/80 dark:bg-[#080d1a]/85 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-900/40 flex items-center justify-between px-6 select-none shadow-sm flex-shrink-0 z-30">
                         <div className="flex items-center gap-4">
                             <button className="text-slate-655 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
                                 <List size={22} />
