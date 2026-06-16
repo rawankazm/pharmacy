@@ -81,7 +81,7 @@ const getLocalProducts = () => {
     }));
 };
 
-const saveLocalProducts = (list) => {
+export const saveLocalProducts = (list) => {
     try {
         // Separate base64 images from product list to avoid quota errors
         const images = JSON.parse(localStorage.getItem(IMAGES_KEY) || '{}');

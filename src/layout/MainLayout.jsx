@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Coffee, ShoppingCart, List, Table, Storefront, Gear, Moon, Sun, CornersOut, CornersIn, Lock, LockOpen, ArrowsClockwise, Package, Basket, ClipboardText, BookOpen, MagnifyingGlass, CaretDown, SignOut, User, Warehouse, ChartBar, Tag, ArrowUUpLeft, Truck, Hourglass, ShieldCheck } from '@phosphor-icons/react';
+import { Coffee, ShoppingCart, List, Table, Storefront, Gear, Moon, Sun, CornersOut, CornersIn, Lock, LockOpen, ArrowsClockwise, Package, Basket, ClipboardText, BookOpen, MagnifyingGlass, CaretDown, SignOut, User, Warehouse, ChartBar, Tag, ArrowUUpLeft, Truck, Hourglass, ShieldCheck, Speedometer, Pill, Users, Sliders, LinkSimple } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import LanguageSwitcher from '../components/LanguageSwitcher';
@@ -10,7 +10,7 @@ import { useKeyboard } from '../context/KeyboardContext';
 
 const MainLayout = () => {
     const location = useLocation();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { isDarkMode, toggleDarkMode } = useTheme();
     const { isVisible: isKeyboardVisible } = useKeyboard();
     const [isFullscreen, setIsFullscreen] = React.useState(false);
@@ -20,14 +20,12 @@ const MainLayout = () => {
             const doc = document;
             const docEl = document.documentElement;
 
-            // Check if currently in fullscreen
             const isCurrentlyFullscreen = doc.fullscreenElement ||
                 doc.webkitFullscreenElement ||
                 doc.mozFullScreenElement ||
                 doc.msFullscreenElement;
 
             if (!isCurrentlyFullscreen) {
-                // Enter fullscreen
                 if (docEl.requestFullscreen) {
                     await docEl.requestFullscreen();
                 } else if (docEl.webkitRequestFullscreen) {
@@ -39,7 +37,6 @@ const MainLayout = () => {
                 }
                 setIsFullscreen(true);
             } else {
-                // Exit fullscreen
                 if (doc.exitFullscreen) {
                     await doc.exitFullscreen();
                 } else if (doc.webkitExitFullscreen) {
@@ -56,7 +53,6 @@ const MainLayout = () => {
         }
     };
 
-    // Listen for fullscreen change events (including browser-specific prefixes)
     React.useEffect(() => {
         const handleChange = () => {
             const isFS = !!(document.fullscreenElement ||
@@ -79,14 +75,6 @@ const MainLayout = () => {
         };
     }, []);
 
-    const menuItems = [
-        { path: '/cashier', icon: ShoppingCart, label: t('menu.cashier') },
-        { path: '/admin/products', icon: Package, label: t('menu.products') },
-        { path: '/admin/debts', icon: BookOpen, label: t('menu.debts') || "Debt Notebook" },
-        { path: '/admin/expenses', icon: ClipboardText, label: t('menu.expenses') || "Expenses" },
-        { path: '/settings', icon: Gear, label: t('menu.settings') },
-    ];
-
     const [appName, setAppName] = React.useState(localStorage.getItem('appName') || 'PharmacyPOS');
 
     React.useEffect(() => {
@@ -97,7 +85,6 @@ const MainLayout = () => {
         return () => window.removeEventListener('app-settings-changed', handleSettingsChange);
     }, []);
 
-    // Global Admin Lock State
     const [isGlobalAdminUnlocked, setIsGlobalAdminUnlocked] = React.useState(() => sessionStorage.getItem('adminUnlocked') === 'true');
     const [isPinModalOpen, setIsPinModalOpen] = React.useState(false);
 
@@ -132,7 +119,6 @@ const MainLayout = () => {
         }
     };
 
-    const [isProfileDropdownOpen, setIsProfileDropdownOpen] = React.useState(false);
     const [currentUser, setCurrentUser] = React.useState(() => {
         const stored = sessionStorage.getItem('activePharmacist');
         return stored ? JSON.parse(stored) : { name: 'Admin Pharmacist' };
@@ -170,7 +156,7 @@ const MainLayout = () => {
             if (path.startsWith('/expired-products')) return currentUser.permissions.expired_page === true;
             if (path.startsWith('/shift-reports')) return currentUser.permissions.shift_reports_page === true;
             if (path.startsWith('/settings')) return currentUser.permissions.settings_page === true;
-            if (path.startsWith('/roles')) return false; // Only admin role has access
+            if (path.startsWith('/roles')) return false;
         }
 
         if (path === '/cashier') return true;
@@ -179,317 +165,171 @@ const MainLayout = () => {
 
     const isAllowed = hasPermission(location.pathname);
 
+    const sidebarItems = [
+        { path: '/dashboard', label: 'Dashboard', ckbLabel: 'داشبۆرد', icon: Speedometer },
+        { path: '/cashier', label: 'POS and Invoices', ckbLabel: 'کاشێر و وەسڵەکان', icon: Storefront },
+        { path: '/warehouse', label: 'Medicines', ckbLabel: 'دەرمانەکان', icon: Pill },
+        { path: '/admin/debts', label: 'Customers', ckbLabel: 'کڕیاران / قەرز', icon: Users },
+        { path: '/suppliers', label: 'Suppliers', ckbLabel: 'دابینکەران', icon: Truck },
+        { path: '/incoming-medicines', label: 'Purchase', ckbLabel: 'کڕینی دەرمان', icon: ShoppingCart },
+        { path: '/shift-reports', label: 'Reports', ckbLabel: 'ڕاپۆرتەکان', icon: ChartBar },
+        { path: '/settings', label: 'Settings', ckbLabel: 'ڕێکخستنەکان', icon: Sliders },
+    ];
+
+    const getCurrentPageTitle = () => {
+        if (location.pathname.startsWith('/dashboard')) return i18n.language === 'ckb' ? 'داشبۆرد' : 'Dashboard Panel';
+        if (location.pathname.startsWith('/cashier')) return i18n.language === 'ckb' ? 'کاشێر و فرۆشتن' : 'POS & Invoices';
+        if (location.pathname.startsWith('/warehouse')) return i18n.language === 'ckb' ? 'تۆماری دەرمان' : 'Medicines Registry';
+        if (location.pathname.startsWith('/admin/debts')) return i18n.language === 'ckb' ? 'قەرزی کڕیاران' : 'Customers Debt';
+        if (location.pathname.startsWith('/suppliers')) return i18n.language === 'ckb' ? 'دابینکەران' : 'Suppliers';
+        if (location.pathname.startsWith('/incoming-medicines')) return i18n.language === 'ckb' ? 'دەرمانی هاتوو' : 'Purchase / Incoming';
+        if (location.pathname.startsWith('/shift-reports')) return i18n.language === 'ckb' ? 'ڕاپۆرتەکان' : 'Reports Panel';
+        if (location.pathname.startsWith('/settings')) return i18n.language === 'ckb' ? 'ڕێکخستنەکان' : 'Settings Panel';
+        return i18n.language === 'ckb' ? 'بەشەکانی تر' : 'Other Section';
+    };
+
     return (
-        <div className="flex flex-col h-screen bg-slate-50 dark:bg-[#030712] overflow-hidden transition-colors duration-300">
-            {/* Top Navbar */}
-            <header className="w-full bg-white dark:bg-[#080d1a]/90 border-b border-slate-200/50 dark:border-slate-900/60 backdrop-blur-xl sticky top-0 z-50 transition-colors duration-300 shadow-sm">
-                <div className="max-w-[1600px] mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
-                    {/* Left: Brand & Search */}
-                    <div className="flex items-center gap-4 md:gap-6 flex-shrink-0">
-                        <Link to="/cashier" className="flex items-center gap-2">
-                            <Storefront size={28} weight="duotone" className="text-emerald-500" />
-                            <span className="text-xl font-extrabold tracking-tight flex items-center">
-                                <span className="text-slate-800 dark:text-white">
-                                    {appName.endsWith('POS') ? appName.slice(0, -3) : appName}
-                                </span>
-                                <span className="text-emerald-500 ml-1">
-                                    {appName.endsWith('POS') ? 'POS' : 'Sans'}
-                                </span>
-                            </span>
-                        </Link>
-                        
-                        {location.pathname === '/cashier' && (
-                            <div className="relative hidden md:block">
-                                <span className="absolute inset-y-0 left-3.5 flex items-center text-slate-400">
-                                    <MagnifyingGlass size={18} />
-                                </span>
-                                <input
-                                    type="text"
-                                    placeholder={t('common.search') || "Search Menu..."}
-                                    className="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800/60 border border-slate-200/30 dark:border-slate-800/50 rounded-full text-sm outline-none focus:bg-white focus:border-emerald-500 dark:focus:bg-slate-900 transition-all w-48 lg:w-64 text-slate-700 dark:text-slate-200"
-                                    onChange={(e) => {
-                                        window.dispatchEvent(new CustomEvent('product-search', { detail: e.target.value }));
-                                    }}
-                                />
-                            </div>
-                        )}
+        <div className="flex flex-col h-screen overflow-hidden bg-[#f4f6f9] text-slate-800 transition-colors duration-300">
+            <div className="w-full bg-[#c0392b] text-white h-9 flex items-center justify-between px-3 text-xs select-none border-b border-red-800 z-50 flex-shrink-0">
+                <div className="flex items-center gap-2">
+                    <LinkSimple size={14} className="text-emerald-400 font-bold" />
+                    <span className="font-semibold uppercase tracking-wider text-[11px]">PHARMACY POS SYSTEM v1.0.0.1</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 pr-1">
+                        <span onClick={() => toast.success('Minimize')} className="w-4 h-4 hover:bg-white/20 flex items-center justify-center rounded cursor-pointer text-[10px]">─</span>
+                        <span onClick={toggleFullScreen} className="w-4 h-4 hover:bg-white/20 flex items-center justify-center rounded cursor-pointer text-[9px]">▢</span>
+                        <span onClick={() => {
+                            if (window.confirm('Do you want to close the application?')) {
+                                window.close();
+                            }
+                        }} className="w-4 h-4 hover:bg-red-650 flex items-center justify-center rounded cursor-pointer font-bold text-[9px]">✕</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex-1 flex flex-row overflow-hidden relative">
+                <aside className="w-64 bg-[#22252a] flex flex-col h-full z-40 flex-shrink-0 select-none text-slate-350 border-r border-slate-900/40">
+                    <div className="flex flex-col items-center py-6 border-b border-slate-750/30">
+                        <div className="w-16 h-16 rounded-full bg-[#5d60a6] flex items-center justify-center border-2 border-slate-600 overflow-hidden relative shadow-lg mb-3">
+                            <svg viewBox="0 0 32 32" className="w-12 h-12 text-slate-100 mt-2">
+                                <circle cx="16" cy="11" r="6" fill="#fcd34d" />
+                                <path d="M16 19c-5.523 0-10 4.477-10 10h20c0-5.523-4.477-10-10-10z" fill="#3b82f6" />
+                            </svg>
+                        </div>
+                        <span className="text-white text-sm font-semibold tracking-wide capitalize">{currentUser?.name || 'admin'}</span>
+                        <div className="flex items-center gap-1.5 mt-1">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span className="text-emerald-400 text-[10px] font-bold">• Online</span>
+                        </div>
                     </div>
 
-                    {/* Middle: Navigation Tabs */}
-                    <nav className="flex items-center gap-1 md:gap-2 overflow-x-auto no-scrollbar scroll-smooth flex-grow justify-center py-1">
-                        {[
-                            { path: '/dashboard', label: 'Dashboard', labelText: 'داشبۆرد' },
-                            { path: '/admin/debts', label: 'Reservation', labelText: t('menu.debts') || "Reservation" },
-                            { path: '/cashier', label: 'Menu', labelText: t('menu.cashier') || "Menu" },
-                            { path: '/incoming-medicines', label: 'Incoming', labelText: 'دەرمانی هاتوو' },
-                            { path: '/warehouse', label: 'Warehouse', labelText: 'تۆماری دەرمان' },
-                            { path: '/admin/expenses', label: 'Accounting', labelText: t('menu.expenses') || "Accounting" }
-                        ].filter(tab => hasPermission(tab.path)).map((tab) => {
-                            const isActive = location.pathname.startsWith(tab.path);
+                    <nav className="flex-1 py-4 space-y-1 overflow-y-auto no-scrollbar">
+                        {sidebarItems.filter(item => hasPermission(item.path)).map((item) => {
+                            const isActive = location.pathname.startsWith(item.path);
+                            const Icon = item.icon;
                             return (
                                 <Link
-                                    key={tab.path}
-                                    to={tab.path}
-                                    className={`px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200 relative whitespace-nowrap ${
+                                    key={item.path}
+                                    to={item.path}
+                                    className={`flex items-center gap-3 py-3.5 px-5 text-[13px] font-semibold transition-all relative ${
                                         isActive
-                                            ? 'text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/20'
-                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200'
+                                            ? 'text-white bg-[#1a1d22] font-bold border-l-[6px] border-emerald-500'
+                                            : 'text-slate-400 hover:text-white hover:bg-[#1a1d22]/50'
                                     }`}
                                 >
-                                    {tab.labelText}
-                                    {isActive && (
-                                        <div className="absolute bottom-0 left-4 right-4 h-0.5 bg-emerald-500 rounded-full" />
-                                    )}
+                                    <Icon size={18} className={isActive ? 'text-emerald-400' : 'text-slate-400'} />
+                                    <span>{i18n.language === 'ckb' ? item.ckbLabel : item.label}</span>
                                 </Link>
                             );
                         })}
+
+                        <button
+                            onClick={() => {
+                                sessionStorage.removeItem('activePharmacist');
+                                window.location.reload();
+                            }}
+                            className="w-full flex items-center gap-3 py-3.5 px-5 text-[13px] font-semibold text-[#e74c3c] hover:bg-[#e74c3c]/10 hover:text-red-400 transition-all text-left rtl:text-right border-l-[6px] border-transparent"
+                        >
+                            <SignOut size={18} className="text-[#e74c3c]" />
+                            <span>{i18n.language === 'ckb' ? 'چوونەدەرەوە' : 'Log out'}</span>
+                        </button>
                     </nav>
 
-                    {/* Right: Cashier Info & Controls */}
-                    <div className="flex items-center gap-2 md:gap-4 flex-shrink-0 relative">
-                        {/* Profile Dropdown Trigger */}
+                    <div className="p-3 border-t border-slate-800 bg-[#1a1d22] flex items-center justify-between gap-2">
+                        <LanguageSwitcher />
                         <button
-                            onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                            className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors duration-200 text-slate-700 dark:text-slate-350"
+                            onClick={toggleDarkMode}
+                            className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                            title="Toggle Theme"
                         >
-                            <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black text-sm flex items-center justify-center border border-emerald-500/20 shadow-sm">
-                                {currentUser.name.charAt(0).toUpperCase()}
-                            </div>
-                            <div className="text-left hidden lg:block">
-                                <p className="text-xs font-bold leading-none text-slate-800 dark:text-slate-200">{currentUser.name}</p>
-                                <p className="text-[10px] text-slate-450 dark:text-slate-500 mt-0.5">{t('menu.cashier') || "Cashier"}</p>
-                            </div>
-                            <CaretDown size={14} className="hidden lg:block text-slate-400" />
+                            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
                         </button>
+                    </div>
+                </aside>
 
-                        {/* Profile Dropdown */}
-                        {isProfileDropdownOpen && (
-                            <>
-                                <div className="fixed inset-0 z-40" onClick={() => setIsProfileDropdownOpen(false)} />
-                                <div className="absolute right-0 top-12 w-56 bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200/60 dark:border-slate-800/80 shadow-xl py-2 z-50 animate-fade-in">
-                                    <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-850 mb-2">
-                                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">{t('login.welcome')}</p>
-                                        <p className="font-bold text-slate-800 dark:text-slate-100 text-sm truncate">{currentUser.name}</p>
+                <div className="flex-1 flex flex-col h-full bg-[#f4f6f9] dark:bg-[#030712] overflow-hidden">
+                    <header className="h-14 bg-white dark:bg-[#080d1a] border-b border-slate-200 dark:border-slate-900/60 flex items-center justify-between px-6 select-none shadow-sm flex-shrink-0">
+                        <div className="flex items-center gap-4">
+                            <button className="text-slate-655 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                                <List size={22} />
+                            </button>
+                            <h2 className="text-[#27ae60] font-black text-lg select-none">
+                                {getCurrentPageTitle()}
+                            </h2>
+                            <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500 text-xs ml-4 font-bold">
+                                <span>Updating</span>
+                                <ArrowsClockwise size={14} className="animate-spin text-slate-400" />
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={toggleAdminLock}
+                                className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/80 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                                title={isGlobalAdminUnlocked ? "Lock Admin Session" : "Unlock Admin Session"}
+                            >
+                                {isGlobalAdminUnlocked ? <LockOpen size={18} /> : <Lock size={18} />}
+                            </button>
+                            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">admin</span>
+                            <div className="w-8 h-8 rounded border border-orange-500/80 bg-white dark:bg-slate-800 flex items-center justify-center text-orange-500 font-bold select-none cursor-pointer">
+                                <User size={16} />
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className={`flex-1 transition-all duration-300 ${
+                        location.pathname === '/cashier'
+                            ? 'overflow-hidden'
+                            : ['/admin/products', '/admin/expenses', '/incoming-medicines', '/warehouse'].includes(location.pathname)
+                                ? 'overflow-hidden p-4 md:p-6'
+                                : 'overflow-y-auto p-4 md:p-6 pb-20'
+                    }`}>
+                        {isAllowed ? (
+                            <Outlet />
+                        ) : (
+                            <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 text-center">
+                                <div className="bg-white dark:bg-[#080d1a]/60 border border-slate-200/50 dark:border-slate-800/80 rounded-3xl p-8 max-w-sm w-full shadow-xl glass-panel animate-fade-in">
+                                    <div className="w-16 h-16 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-500 mx-auto mb-4 border border-rose-500/20">
+                                        <Lock size={32} weight="duotone" />
                                     </div>
-                                    
-                                    {hasPermission('/admin/products') && (
-                                        <Link
-                                            to="/admin/products"
-                                            onClick={() => setIsProfileDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                                        >
-                                            <Package size={18} />
-                                            <span>{t('menu.products')}</span>
-                                        </Link>
-                                    )}
-                                    
-                                    {hasPermission('/incoming-medicines') && (
-                                        <Link
-                                            to="/incoming-medicines"
-                                            onClick={() => setIsProfileDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                                        >
-                                            <Truck size={18} />
-                                            <span>دەرمانی هاتوو</span>
-                                        </Link>
-                                    )}
-
-                                    {hasPermission('/warehouse') && (
-                                        <Link
-                                            to="/warehouse"
-                                            onClick={() => setIsProfileDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                                        >
-                                            <Warehouse size={18} />
-                                            <span>تۆماری دەرمان</span>
-                                        </Link>
-                                    )}
-
-                                    {hasPermission('/dashboard') && (
-                                        <Link
-                                            to="/dashboard"
-                                            onClick={() => setIsProfileDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                                        >
-                                            <ChartBar size={18} />
-                                            <span>داشبۆرد</span>
-                                        </Link>
-                                    )}
-
-                                    {hasPermission('/discounts') && (
-                                        <Link
-                                            to="/discounts"
-                                            onClick={() => setIsProfileDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                                        >
-                                            <Tag size={18} />
-                                            <span>داشکاندن</span>
-                                        </Link>
-                                    )}
-
-                                    {hasPermission('/returns') && (
-                                        <Link
-                                            to="/returns"
-                                            onClick={() => setIsProfileDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                                        >
-                                            <ArrowUUpLeft size={18} />
-                                            <span>گەڕانەوەی کاڵا</span>
-                                        </Link>
-                                    )}
-
-                                    {hasPermission('/suppliers') && (
-                                        <Link
-                                            to="/suppliers"
-                                            onClick={() => setIsProfileDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                                        >
-                                            <Truck size={18} />
-                                            <span>دابینکەران</span>
-                                        </Link>
-                                    )}
-
-                                    {hasPermission('/expired-products') && (
-                                        <Link
-                                            to="/expired-products"
-                                            onClick={() => setIsProfileDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                                        >
-                                            <Hourglass size={18} />
-                                            <span>کاڵا بەسەرچووەکان</span>
-                                        </Link>
-                                    )}
-
-                                    {hasPermission('/shift-reports') && (
-                                        <Link
-                                            to="/shift-reports"
-                                            onClick={() => setIsProfileDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                                        >
-                                            <ClipboardText size={18} />
-                                            <span>ڕاپۆرتی کۆتایی ڕۆژ</span>
-                                        </Link>
-                                    )}
-
-                                    {(currentUser?.role === 'admin' || sessionStorage.getItem('adminUnlocked') === 'true') && (
-                                        <Link
-                                            to="/roles"
-                                            onClick={() => setIsProfileDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800/60 mt-1 pt-2"
-                                        >
-                                            <ShieldCheck size={18} />
-                                            <span>دەسەڵاتی بەکارهێنەران</span>
-                                        </Link>
-                                    )}
-                                    
-                                    {hasPermission('/settings') && (
-                                        <Link
-                                            to="/settings"
-                                            onClick={() => setIsProfileDropdownOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                                        >
-                                            <Gear size={18} />
-                                            <span>{t('menu.settings')}</span>
-                                        </Link>
-                                    )}
-                                    
+                                    <h2 className="text-lg font-black text-slate-850 dark:text-slate-100 mb-2">دەسەڵاتی ڕێگەپێدراو نییە</h2>
+                                    <p className="text-xs text-slate-550 dark:text-slate-400 mb-6 leading-relaxed" dir="rtl">
+                                        تۆ دەسەڵاتی بینینی لاپەڕەی <span className="font-bold text-rose-500">{location.pathname}</span>ت نییە. پێویستت بە مۆڵەتی بەرێوەبەر هەیە.
+                                    </p>
                                     <button
-                                        onClick={() => {
-                                            setIsProfileDropdownOpen(false);
-                                            toggleAdminLock();
-                                        }}
-                                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-left rtl:text-right"
+                                        onClick={() => setIsPinModalOpen(true)}
+                                        className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black shadow-lg shadow-rose-600/15 transition-all"
                                     >
-                                        {isGlobalAdminUnlocked ? <LockOpen size={18} /> : <Lock size={18} />}
-                                        <span>{isGlobalAdminUnlocked ? (t('admin.lock_session') || "Lock Session") : (t('admin.unlock_session') || "Unlock Session")}</span>
-                                    </button>
-                                    
-                                    <button
-                                        onClick={() => {
-                                            setIsProfileDropdownOpen(false);
-                                            toggleFullScreen();
-                                        }}
-                                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-left rtl:text-right"
-                                    >
-                                        {isFullscreen ? <CornersIn size={18} /> : <CornersOut size={18} />}
-                                        <span>{t('common.fullscreen')}</span>
-                                    </button>
-
-                                    <button
-                                        onClick={() => {
-                                            setIsProfileDropdownOpen(false);
-                                            toggleDarkMode();
-                                        }}
-                                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-left rtl:text-right"
-                                    >
-                                        {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-                                        <span>{isDarkMode ? "Light Mode" : "Dark Mode"}</span>
-                                    </button>
-
-                                    <div className="h-px bg-slate-100 dark:bg-slate-800/60 my-2" />
-                                    
-                                    <button
-                                        onClick={() => {
-                                            setIsProfileDropdownOpen(false);
-                                            sessionStorage.removeItem('activePharmacist');
-                                            window.location.reload();
-                                        }}
-                                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-650 hover:bg-red-50 dark:hover:bg-red-955/20 text-left rtl:text-right font-bold"
-                                    >
-                                        <SignOut size={18} />
-                                        <span>{t('login.switch_user')}</span>
+                                        داخڵکردنی PINی بەرێوەبەر
                                     </button>
                                 </div>
-                            </>
-                        )}
-
-                        {/* Quick controls panel next to dropdown for accessibility */}
-                        <div className="flex items-center gap-1 border-l border-slate-200 dark:border-slate-800 pl-2">
-                            <button
-                                onClick={() => window.location.reload()}
-                                className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 text-slate-400 hover:text-slate-650 dark:text-slate-500 dark:hover:text-slate-300 transition-colors"
-                                title={t('common.refresh')}
-                            >
-                                <ArrowsClockwise size={20} />
-                            </button>
-                            <LanguageSwitcher />
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            {/* Main Content */}
-            <main className={`flex-1 transition-all duration-300 ${
-                location.pathname === '/cashier'
-                    ? 'overflow-hidden'
-                    : ['/admin/products', '/admin/expenses', '/incoming-medicines', '/warehouse'].includes(location.pathname)
-                        ? 'overflow-hidden p-4 md:p-6'
-                        : 'overflow-y-auto p-4 md:p-6 pb-20'
-            }`}>
-                {isAllowed ? (
-                    <Outlet />
-                ) : (
-                    <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 text-center">
-                        <div className="bg-white dark:bg-[#080d1a]/60 border border-slate-200/50 dark:border-slate-800/80 rounded-3xl p-8 max-w-sm w-full shadow-xl glass-panel animate-fade-in">
-                            <div className="w-16 h-16 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-500 mx-auto mb-4 border border-rose-500/20">
-                                <Lock size={32} weight="duotone" />
                             </div>
-                            <h2 className="text-lg font-black text-slate-850 dark:text-slate-100 mb-2">دەسەڵاتی ڕێگەپێدراو نییە</h2>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 leading-relaxed" dir="rtl">
-                                تۆ دەسەڵاتی بینینی لاپەڕەی <span className="font-bold text-rose-500">{location.pathname}</span>ت نییە. پێویستت بە مۆڵەتی بەرێوەبەر هەیە.
-                            </p>
-                            <button
-                                onClick={() => setIsPinModalOpen(true)}
-                                className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black shadow-lg shadow-rose-600/15 transition-all"
-                            >
-                                داخڵکردنی PINی بەرێوەبەر
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </main>
+                        )}
+                    </main>
+                </div>
+            </div>
 
-            {/* The PIN Custom Modal */}
             <AdminPinModal
                 isOpen={isPinModalOpen}
                 onClose={() => setIsPinModalOpen(false)}
