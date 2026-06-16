@@ -89,6 +89,7 @@ function App() {
                 <Route path="roles" element={<RolesPage />} />
                 <Route path="shift-reports" element={<ShiftReportsPage />} />
                 <Route path="sales" element={<SalesPage />} />
+                <Route path="*" element={<Navigate to="/cashier" replace />} />
               </Route>
             </Routes>
           </Suspense>
