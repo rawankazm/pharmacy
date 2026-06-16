@@ -145,13 +145,10 @@ const MainLayout = () => {
 
         if (currentUser?.permissions) {
             if (path.startsWith('/dashboard')) return currentUser.permissions.dashboard_page === true;
-            if (path.startsWith('/admin/debts')) return currentUser.permissions.debts_page === true;
             if (path.startsWith('/cashier')) return currentUser.permissions.cashier_page === true;
             if (path.startsWith('/warehouse') || path.startsWith('/incoming-medicines')) return currentUser.permissions.warehouse_page === true;
             if (path.startsWith('/admin/expenses')) return currentUser.permissions.expenses_page === true;
             if (path.startsWith('/admin/products')) return currentUser.permissions.products_page === true;
-            if (path.startsWith('/discounts')) return currentUser.permissions.discounts_page === true;
-            if (path.startsWith('/returns')) return currentUser.permissions.returns_page === true;
             if (path.startsWith('/suppliers')) return currentUser.permissions.suppliers_page === true;
             if (path.startsWith('/expired-products')) return currentUser.permissions.expired_page === true;
             if (path.startsWith('/shift-reports')) return currentUser.permissions.shift_reports_page === true;
@@ -169,7 +166,6 @@ const MainLayout = () => {
         { path: '/dashboard', label: 'Dashboard', ckbLabel: 'داشبۆرد', icon: Speedometer },
         { path: '/cashier', label: 'POS and Invoices', ckbLabel: 'کاشێر و وەسڵەکان', icon: Storefront },
         { path: '/warehouse', label: 'Medicines', ckbLabel: 'دەرمانەکان', icon: Pill },
-        { path: '/admin/debts', label: 'Customers', ckbLabel: 'کڕیاران / قەرز', icon: Users },
         { path: '/suppliers', label: 'Suppliers', ckbLabel: 'دابینکەران', icon: Truck },
         { path: '/incoming-medicines', label: 'Purchase', ckbLabel: 'کڕینی دەرمان', icon: ShoppingCart },
         { path: '/shift-reports', label: 'Reports', ckbLabel: 'ڕاپۆرتەکان', icon: ChartBar },
@@ -180,7 +176,6 @@ const MainLayout = () => {
         if (location.pathname.startsWith('/dashboard')) return i18n.language === 'ckb' ? 'داشبۆرد' : 'Dashboard Panel';
         if (location.pathname.startsWith('/cashier')) return i18n.language === 'ckb' ? 'کاشێر و فرۆشتن' : 'POS & Invoices';
         if (location.pathname.startsWith('/warehouse')) return i18n.language === 'ckb' ? 'تۆماری دەرمان' : 'Medicines Registry';
-        if (location.pathname.startsWith('/admin/debts')) return i18n.language === 'ckb' ? 'قەرزی کڕیاران' : 'Customers Debt';
         if (location.pathname.startsWith('/suppliers')) return i18n.language === 'ckb' ? 'دابینکەران' : 'Suppliers';
         if (location.pathname.startsWith('/incoming-medicines')) return i18n.language === 'ckb' ? 'دەرمانی هاتوو' : 'Purchase / Incoming';
         if (location.pathname.startsWith('/shift-reports')) return i18n.language === 'ckb' ? 'ڕاپۆرتەکان' : 'Reports Panel';

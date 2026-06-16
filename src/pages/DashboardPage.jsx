@@ -116,14 +116,6 @@ const DashboardPage = () => {
             path: '/warehouse'
         },
         {
-            title: 'New Customer',
-            ckbTitle: 'کڕیاری نوێ',
-            desc: 'Add new Customer to the System',
-            ckbDesc: 'زیادکردنی کڕیاری نوێ بۆ سیستەمەکە',
-            icon: UserPlus,
-            path: '/admin/debts'
-        },
-        {
             title: 'Todays Report',
             ckbTitle: 'ڕاپۆرتی ئەمڕۆ',
             desc: 'Everything done today POS + Invoices',

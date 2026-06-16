@@ -26,13 +26,10 @@ const AdminProducts = lazyWithRetry(() => import('./pages/AdminProducts'));
 const CashierPage = lazyWithRetry(() => import('./pages/CashierPage'));
 const SalesPage = lazyWithRetry(() => import('./pages/SalesPage'));
 const SettingsPage = lazyWithRetry(() => import('./pages/SettingsPage'));
-const DebtPage = lazyWithRetry(() => import('./pages/DebtPage'));
 const ExpensesPage = lazyWithRetry(() => import('./pages/ExpensesPage'));
 const WarehousePage = lazyWithRetry(() => import('./pages/WarehousePage'));
 const IncomingMedicinesPage = lazyWithRetry(() => import('./pages/IncomingMedicinesPage'));
 const DashboardPage = lazyWithRetry(() => import('./pages/DashboardPage'));
-const DiscountsPage = lazyWithRetry(() => import('./pages/DiscountsPage'));
-const ReturnsPage = lazyWithRetry(() => import('./pages/ReturnsPage'));
 const SuppliersPage = lazyWithRetry(() => import('./pages/SuppliersPage'));
 const ExpiredProductsPage = lazyWithRetry(() => import('./pages/ExpiredProductsPage'));
 const RolesPage = lazyWithRetry(() => import('./pages/RolesPage'));
@@ -82,14 +79,11 @@ function App() {
                 <Route path="cashier" element={<CashierPage />} />
 
                 <Route path="admin/products" element={<AdminProducts />} />
-                <Route path="admin/debts" element={<DebtPage />} />
                 <Route path="admin/expenses" element={<ExpensesPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="warehouse" element={<WarehousePage />} />
                 <Route path="incoming-medicines" element={<IncomingMedicinesPage />} />
                 <Route path="dashboard" element={<DashboardPage />} />
-                <Route path="discounts" element={<DiscountsPage />} />
-                <Route path="returns" element={<ReturnsPage />} />
                 <Route path="suppliers" element={<SuppliersPage />} />
                 <Route path="expired-products" element={<ExpiredProductsPage />} />
                 <Route path="roles" element={<RolesPage />} />

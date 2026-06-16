@@ -14,10 +14,7 @@ const AVAILABLE_PERMISSIONS = [
     { key: 'products_page', label: 'بەڕێوەبردنی بەرهەمەکان', desc: 'زیادکردن، سڕینەوە و گۆڕینی نرخی بەرهەمەکان' },
     { key: 'warehouse_page', label: 'کۆگا', desc: 'بینینی مەوجوود، هێنان و ناردنی کاڵا، و تۆماری جموجۆڵ' },
     { key: 'expenses_page', label: 'خەرجییەکان', desc: 'تۆمارکردن و بینینی خەرجییەکانی مارکێت' },
-    { key: 'debts_page', label: 'دەفتەری قەرز', desc: 'تۆمارکردن، بینینی پارەدان و دەفتەری قەرزی کڕیاران' },
     { key: 'suppliers_page', label: 'دابینکەران', desc: 'تۆمارکردنی دابینکەران و تۆماری کڕینی لێیان' },
-    { key: 'discounts_page', label: 'داشکاندنەکان', desc: 'دروستکردن و بەڕێوەبردنی کۆدەکانی داشکاندن' },
-    { key: 'returns_page', label: 'گەڕانەوەی کاڵا', desc: 'تۆمارکردن و بینینی کاڵا گەڕاوەکان و بڕی گەڕاوە' },
     { key: 'expired_page', label: 'کاڵا بەسەرچووەکان', desc: 'تۆمار و بەدواداچوونی ڕێکەوتی بەسەرچوون و خەسارکردن' },
     { key: 'shift_reports_page', label: 'ڕاپۆرتی کۆتایی ڕۆژ', desc: 'بینین و چاپکردنەوە و بەڕێوەبردنی ڕاپۆرتەکانی داخستنی شیفت و سندوق' },
     { key: 'settings_page', label: 'ڕێکخستنەکان', desc: 'بینین و گۆڕینی ڕێکخستنی سەرەکی مارکێت و گۆڕینی PIN' }
@@ -29,10 +26,7 @@ const DEFAULT_PERMISSIONS = {
     products_page: false,
     warehouse_page: false,
     expenses_page: false,
-    debts_page: false,
     suppliers_page: false,
-    discounts_page: false,
-    returns_page: false,
     expired_page: false,
     shift_reports_page: false,
     settings_page: false
@@ -44,10 +38,7 @@ const DEFAULT_ADMIN_PERMISSIONS = {
     products_page: true,
     warehouse_page: true,
     expenses_page: true,
-    debts_page: true,
     suppliers_page: true,
-    discounts_page: true,
-    returns_page: true,
     expired_page: true,
     shift_reports_page: true,
     settings_page: true
