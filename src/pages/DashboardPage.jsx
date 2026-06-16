@@ -252,7 +252,7 @@ const DashboardPage = () => {
                 {/* Footer text */}
                 <div className="pt-8 pb-4 text-center border-t border-slate-200/50 dark:border-slate-850/30">
                     <p className="text-xs text-slate-400 dark:text-slate-550 font-medium">
-                        Developed By George Wainaina | Swagfin Inc | +254705 418 696
+                        Developed By birdev 2026
                     </p>
                 </div>
             </div>
