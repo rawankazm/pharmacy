@@ -1574,13 +1574,13 @@ const CashierPage = () => {
                                                                     <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 block text-left rtl:text-right">
                                                                         پێکهاتەی پارەکە (Banknote Breakdown):
                                                                     </span>
-                                                                    <div className="flex flex-wrap gap-3 justify-center">
+                                                                    <div className="flex flex-row overflow-x-auto gap-3 py-2 justify-start md:justify-center w-full">
                                                                         {notes.map((note, nIdx) => (
-                                                                            <div key={nIdx} className="flex flex-col items-center gap-2 p-2 bg-white dark:bg-slate-950/60 rounded-xl border border-slate-150 dark:border-slate-850 shadow-md relative group hover:scale-102 transition-transform w-[240px]">
-                                                                                <div className="h-28 w-56 rounded-lg overflow-hidden border border-slate-200/60 dark:border-slate-800/60 bg-slate-100 flex items-center justify-center">
+                                                                            <div key={nIdx} className="flex flex-col items-center gap-2 p-2 bg-white dark:bg-slate-950/60 rounded-xl border border-slate-150 dark:border-slate-850 shadow-md relative group hover:scale-102 transition-transform w-[180px] shrink-0">
+                                                                                <div className="h-20 w-[160px] rounded-lg overflow-hidden border border-slate-200/60 dark:border-slate-800/60 bg-slate-100 flex items-center justify-center">
                                                                                     <img src={note.img} alt={`${note.value} IQD`} className="h-full w-full object-cover" />
                                                                                 </div>
-                                                                                <span className="text-xs sm:text-sm font-extrabold text-gray-800 dark:text-gray-200">
+                                                                                <span className="text-xs font-extrabold text-gray-800 dark:text-gray-200">
                                                                                     {note.label} {t('common.currency')} × {note.count}
                                                                                 </span>
                                                                             </div>
