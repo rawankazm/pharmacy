@@ -798,7 +798,7 @@ const AdminProducts = () => {
                                         <th className="p-4 font-bold text-slate-700 dark:text-slate-300 text-right rtl:text-left uppercase tracking-wider text-xs">{t('common.actions')}</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100/50 dark:divide-slate-800/60">
+                                 <tbody className="divide-y divide-slate-100/50 dark:divide-slate-800/60">
                                     {loading ? (
                                         <tr><td colSpan="6" className="p-8 text-center text-gray-500 dark:text-gray-400">Loading...</td></tr>
                                     ) : (products || []).map((product) => (
@@ -812,7 +812,7 @@ const AdminProducts = () => {
                                                             className="w-full h-full object-cover" 
                                                             onError={(e) => {
                                                                 e.target.onerror = null;
-                                                                e.target.src = 'https://images.unsplash.com/photo-1607619056574-7b8f30413736?auto=format&fit=crop&q=80&w=200';
+                                                                e.target.src = 'https://upload.wikimedia.org/wikipedia/commons/1/18/Pills_in_blister_pack.jpg';
                                                             }}
                                                         />
                                                     ) : (

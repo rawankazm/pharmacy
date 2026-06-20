@@ -1034,7 +1034,7 @@ const CashierPage = () => {
                                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform" 
                                                         onError={(e) => {
                                                             e.target.onerror = null;
-                                                            e.target.src = 'https://images.unsplash.com/photo-1607619056574-7b8f30413736?auto=format&fit=crop&q=80&w=200';
+                                                            e.target.src = 'https://upload.wikimedia.org/wikipedia/commons/1/18/Pills_in_blister_pack.jpg';
                                                         }}
                                                     />
                                                 ) : (
@@ -1721,7 +1721,7 @@ const CashierPage = () => {
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform" 
                                                 onError={(e) => {
                                                     e.target.onerror = null;
-                                                    e.target.src = 'https://images.unsplash.com/photo-1607619056574-7b8f30413736?auto=format&fit=crop&q=80&w=200';
+                                                    e.target.src = 'https://upload.wikimedia.org/wikipedia/commons/1/18/Pills_in_blister_pack.jpg';
                                                 }}
                                             />
                                         ) : (
