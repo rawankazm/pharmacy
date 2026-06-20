@@ -87,6 +87,18 @@ const MainLayout = () => {
 
     const [isGlobalAdminUnlocked, setIsGlobalAdminUnlocked] = React.useState(() => sessionStorage.getItem('adminUnlocked') === 'true');
     const [isPinModalOpen, setIsPinModalOpen] = React.useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = React.useState(() => {
+        const saved = localStorage.getItem('sidebarOpen');
+        return saved !== null ? JSON.parse(saved) : true;
+    });
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(prev => {
+            const next = !prev;
+            localStorage.setItem('sidebarOpen', JSON.stringify(next));
+            return next;
+        });
+    };
 
     React.useEffect(() => {
         const handleAuthChange = () => {
@@ -209,7 +221,9 @@ const MainLayout = () => {
             {/* Layout container */}
             <div className="flex-1 flex flex-row overflow-hidden relative">
                 {/* Dark left sidebar with Glassmorphic effects */}
-                <aside className="w-64 bg-[#1a1d24]/95 backdrop-blur-md flex flex-col h-full z-40 flex-shrink-0 select-none text-slate-350 border-r border-white/5 relative">
+                <aside className={`bg-[#1a1d24]/95 backdrop-blur-md flex flex-col h-full z-40 flex-shrink-0 select-none text-slate-350 border-r border-white/5 relative transition-all duration-300 ${
+                    isSidebarOpen ? 'w-64' : 'w-0 overflow-hidden border-none'
+                }`}>
                     {/* App Logo / Brand */}
                     <div className="flex items-center gap-3 px-6 py-5 border-b border-white/5 bg-[#14161c]/40">
                         <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-transform duration-300 hover:scale-105">
@@ -289,7 +303,11 @@ const MainLayout = () => {
                     {/* Header bar with glassmorphic filter */}
                     <header className="h-14 bg-white/80 dark:bg-[#080d1a]/85 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-900/40 flex items-center justify-between px-6 select-none shadow-sm flex-shrink-0 z-30">
                         <div className="flex items-center gap-4">
-                            <button className="text-slate-655 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                            <button 
+                                onClick={toggleSidebar}
+                                className="p-1.5 rounded-lg border border-slate-200/50 dark:border-slate-800/85 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all duration-200 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800/80"
+                                title={isSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+                            >
                                 <List size={22} />
                             </button>
                             <h2 className="text-[#27ae60] font-black text-lg select-none">
