@@ -224,77 +224,81 @@ const MainLayout = () => {
                 <aside className={`bg-[#1a1d24]/95 backdrop-blur-md flex flex-col h-full z-40 flex-shrink-0 select-none text-slate-350 border-r border-white/5 relative transition-all duration-300 ${
                     isSidebarOpen ? 'w-64' : 'w-0 overflow-hidden border-none'
                 }`}>
-                    {/* App Logo / Brand */}
-                    <div className="flex items-center gap-3 px-6 py-5 border-b border-white/5 bg-[#14161c]/40">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-transform duration-300 hover:scale-105">
-                            <Pill size={22} weight="fill" className="rotate-45" />
+                    <div className={`w-64 flex flex-col h-full transition-all duration-300 ${
+                        isSidebarOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
+                    }`}>
+                        {/* App Logo / Brand */}
+                        <div className="flex items-center gap-3 px-6 py-5 border-b border-white/5 bg-[#14161c]/40">
+                            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-transform duration-300 hover:scale-105">
+                                <Pill size={22} weight="fill" className="rotate-45" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-white text-sm font-black tracking-wide leading-none">دەرمانخانە پۆس</span>
+                                <span className="text-emerald-400 text-[10px] font-bold mt-1.5 tracking-wider uppercase">Simply Meds</span>
+                            </div>
                         </div>
-                        <div className="flex flex-col">
-                            <span className="text-white text-sm font-black tracking-wide leading-none">دەرمانخانە پۆس</span>
-                            <span className="text-emerald-400 text-[10px] font-bold mt-1.5 tracking-wider uppercase">Simply Meds</span>
+
+                        {/* Pharmacist profile box */}
+                        <div className="flex flex-col items-center py-6 border-b border-white/5">
+                            {/* Avatar */}
+                            <div className="w-16 h-16 rounded-full bg-[#5d60a6] flex items-center justify-center border-2 border-slate-500/80 overflow-hidden relative shadow-[0_0_15px_rgba(93,96,166,0.3)] mb-3 transition-transform duration-300 hover:scale-105">
+                                <svg viewBox="0 0 32 32" className="w-12 h-12 text-slate-100 mt-2">
+                                    <circle cx="16" cy="11" r="6" fill="#fcd34d" />
+                                    <path d="M16 19c-5.523 0-10 4.477-10 10h20c0-5.523-4.477-10-10-10z" fill="#3b82f6" />
+                                </svg>
+                            </div>
+                            <span className="text-white text-sm font-semibold tracking-wide capitalize">{currentUser?.name || 'admin'}</span>
+                            <div className="flex items-center gap-1.5 mt-1">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
+                                <span className="text-emerald-400 text-[10px] font-bold">• Online</span>
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Pharmacist profile box */}
-                    <div className="flex flex-col items-center py-6 border-b border-white/5">
-                        {/* Avatar */}
-                        <div className="w-16 h-16 rounded-full bg-[#5d60a6] flex items-center justify-center border-2 border-slate-500/80 overflow-hidden relative shadow-[0_0_15px_rgba(93,96,166,0.3)] mb-3 transition-transform duration-300 hover:scale-105">
-                            <svg viewBox="0 0 32 32" className="w-12 h-12 text-slate-100 mt-2">
-                                <circle cx="16" cy="11" r="6" fill="#fcd34d" />
-                                <path d="M16 19c-5.523 0-10 4.477-10 10h20c0-5.523-4.477-10-10-10z" fill="#3b82f6" />
-                            </svg>
+                        {/* Navigation Menu */}
+                        <nav className="flex-1 py-4 space-y-1 overflow-y-auto no-scrollbar">
+                            {sidebarItems.filter(item => hasPermission(item.path)).map((item) => {
+                                const isActive = location.pathname.startsWith(item.path);
+                                const Icon = item.icon;
+                                return (
+                                    <Link
+                                        key={item.path}
+                                        to={item.path}
+                                        className={`flex items-center gap-3 py-3.5 px-5 text-[13px] font-semibold transition-all duration-300 relative ${
+                                            isActive
+                                                ? 'text-white bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-transparent font-bold border-l-[6px] border-emerald-500 shadow-[inset_1px_0_0_0_rgba(16,185,129,0.1)]'
+                                                : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        <Icon size={18} className={isActive ? 'text-emerald-400' : 'text-slate-400'} />
+                                        <span>{i18n.language === 'ckb' ? item.ckbLabel : item.label}</span>
+                                    </Link>
+                                );
+                            })}
+
+                            {/* Log out option */}
+                            <button
+                                onClick={() => {
+                                    sessionStorage.removeItem('activePharmacist');
+                                    window.location.reload();
+                                }}
+                                className="w-full flex items-center gap-3 py-3.5 px-5 text-[13px] font-semibold text-[#e74c3c] hover:bg-[#e74c3c]/10 hover:text-red-400 transition-all text-left rtl:text-right border-l-[6px] border-transparent"
+                            >
+                                <SignOut size={18} className="text-[#e74c3c]" />
+                                <span>{i18n.language === 'ckb' ? 'چوونەدەرەوە' : 'Log out'}</span>
+                            </button>
+                        </nav>
+
+                        {/* Footer / Settings */}
+                        <div className="p-3 border-t border-white/5 bg-[#171a20]/90 backdrop-blur-md flex items-center justify-between gap-2 mt-auto">
+                            <LanguageSwitcher />
+                            <button
+                                onClick={toggleDarkMode}
+                                className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                                title="Toggle Theme"
+                            >
+                                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+                            </button>
                         </div>
-                        <span className="text-white text-sm font-semibold tracking-wide capitalize">{currentUser?.name || 'admin'}</span>
-                        <div className="flex items-center gap-1.5 mt-1">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
-                            <span className="text-emerald-400 text-[10px] font-bold">• Online</span>
-                        </div>
-                    </div>
-
-                    {/* Navigation Menu */}
-                    <nav className="flex-1 py-4 space-y-1 overflow-y-auto no-scrollbar">
-                        {sidebarItems.filter(item => hasPermission(item.path)).map((item) => {
-                            const isActive = location.pathname.startsWith(item.path);
-                            const Icon = item.icon;
-                            return (
-                                <Link
-                                    key={item.path}
-                                    to={item.path}
-                                    className={`flex items-center gap-3 py-3.5 px-5 text-[13px] font-semibold transition-all duration-300 relative ${
-                                        isActive
-                                            ? 'text-white bg-gradient-to-r from-emerald-500/15 via-emerald-500/5 to-transparent font-bold border-l-[6px] border-emerald-500 shadow-[inset_1px_0_0_0_rgba(16,185,129,0.1)]'
-                                            : 'text-slate-400 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    <Icon size={18} className={isActive ? 'text-emerald-400' : 'text-slate-400'} />
-                                    <span>{i18n.language === 'ckb' ? item.ckbLabel : item.label}</span>
-                                </Link>
-                            );
-                        })}
-
-                        {/* Log out option */}
-                        <button
-                            onClick={() => {
-                                sessionStorage.removeItem('activePharmacist');
-                                window.location.reload();
-                            }}
-                            className="w-full flex items-center gap-3 py-3.5 px-5 text-[13px] font-semibold text-[#e74c3c] hover:bg-[#e74c3c]/10 hover:text-red-400 transition-all text-left rtl:text-right border-l-[6px] border-transparent"
-                        >
-                            <SignOut size={18} className="text-[#e74c3c]" />
-                            <span>{i18n.language === 'ckb' ? 'چوونەدەرەوە' : 'Log out'}</span>
-                        </button>
-                    </nav>
-
-                    {/* Footer / Settings */}
-                    <div className="p-3 border-t border-white/5 bg-[#171a20]/90 backdrop-blur-md flex items-center justify-between gap-2">
-                        <LanguageSwitcher />
-                        <button
-                            onClick={toggleDarkMode}
-                            className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-                            title="Toggle Theme"
-                        >
-                            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-                        </button>
                     </div>
                 </aside>
 
