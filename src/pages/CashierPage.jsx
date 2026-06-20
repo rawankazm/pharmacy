@@ -1028,7 +1028,15 @@ const CashierPage = () => {
                                             {/* Product Image or Placeholder */}
                                             <div className="h-44 w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/60 rounded-xl overflow-hidden flex items-center justify-center shrink-0 mb-3">
                                                 {product.image_url ? (
-                                                    <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                                                    <img 
+                                                        src={product.image_url} 
+                                                        alt={product.name} 
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform" 
+                                                        onError={(e) => {
+                                                            e.target.onerror = null;
+                                                            e.target.src = 'https://images.unsplash.com/photo-1607619056574-7b8f30413736?auto=format&fit=crop&q=80&w=200';
+                                                        }}
+                                                    />
                                                 ) : (
                                                     <div className="text-coffee-400/70 font-black text-3xl uppercase tracking-wider">
                                                         {displayName.slice(0, 2)}
@@ -1707,7 +1715,15 @@ const CashierPage = () => {
 
                                     <div className="h-20 w-20 bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/60 rounded-lg overflow-hidden shrink-0">
                                         {product.image_url ? (
-                                            <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                                            <img 
+                                                src={product.image_url} 
+                                                alt={product.name} 
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform" 
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = 'https://images.unsplash.com/photo-1607619056574-7b8f30413736?auto=format&fit=crop&q=80&w=200';
+                                                }}
+                                            />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center text-gray-400"><Plus size={32} /></div>
                                         )}

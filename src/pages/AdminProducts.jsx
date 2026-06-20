@@ -806,7 +806,15 @@ const AdminProducts = () => {
                                             <td className="p-4 text-left rtl:text-right">
                                                 <div className="w-12 h-12 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200/30 dark:border-slate-800/60 overflow-hidden inline-block shadow-sm">
                                                     {product.image_url ? (
-                                                        <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                                                        <img 
+                                                            src={product.image_url} 
+                                                            alt={product.name} 
+                                                            className="w-full h-full object-cover" 
+                                                            onError={(e) => {
+                                                                e.target.onerror = null;
+                                                                e.target.src = 'https://images.unsplash.com/photo-1607619056574-7b8f30413736?auto=format&fit=crop&q=80&w=200';
+                                                            }}
+                                                        />
                                                     ) : (
                                                         <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
                                                             <Package size={20} weight="duotone" />
