@@ -190,7 +190,7 @@ const MainLayout = () => {
                 {/* Sheen Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
                 <div className="flex items-center gap-2 relative z-10">
-                    <LinkSimple size={14} className="text-emerald-400 font-bold" />
+                    <Pill size={14} className="text-emerald-400 font-bold rotate-45" weight="fill" />
                     <span className="font-semibold uppercase tracking-wider text-[11px]">PHARMACY POS SYSTEM v1.0.0.1</span>
                 </div>
                 <div className="flex items-center gap-3 relative z-10">
@@ -210,6 +210,17 @@ const MainLayout = () => {
             <div className="flex-1 flex flex-row overflow-hidden relative">
                 {/* Dark left sidebar with Glassmorphic effects */}
                 <aside className="w-64 bg-[#1a1d24]/95 backdrop-blur-md flex flex-col h-full z-40 flex-shrink-0 select-none text-slate-350 border-r border-white/5 relative">
+                    {/* App Logo / Brand */}
+                    <div className="flex items-center gap-3 px-6 py-5 border-b border-white/5 bg-[#14161c]/40">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)] transition-transform duration-300 hover:scale-105">
+                            <Pill size={22} weight="fill" className="rotate-45" />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-white text-sm font-black tracking-wide leading-none">دەرمانخانە پۆس</span>
+                            <span className="text-emerald-400 text-[10px] font-bold mt-1.5 tracking-wider uppercase">Simply Meds</span>
+                        </div>
+                    </div>
+
                     {/* Pharmacist profile box */}
                     <div className="flex flex-col items-center py-6 border-b border-white/5">
                         {/* Avatar */}

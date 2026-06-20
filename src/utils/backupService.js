@@ -48,7 +48,7 @@ export const downloadBackup = async () => {
         const a = document.createElement('a');
         a.href = url;
         const dateStr = new Date().toISOString().split('T')[0];
-        a.download = `MarketPOS_Backup_${dateStr}.json`;
+        a.download = `SimplyMeds_Backup_${dateStr}.json`;
         document.body.appendChild(a);
         a.click();
         setTimeout(() => {

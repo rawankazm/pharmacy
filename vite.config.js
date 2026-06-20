@@ -15,9 +15,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'logo-192x192.png', 'logo-512x512.png'],
       manifest: {
-        name: 'Market',
-        short_name: 'Market',
-        description: 'Market Point of Sale System',
+        name: 'Simply Meds',
+        short_name: 'Simply Meds',
+        description: 'Simply Meds - Pharmacy Point of Sale System',
         theme_color: '#10b981',
         background_color: '#ffffff',
         display: 'standalone',

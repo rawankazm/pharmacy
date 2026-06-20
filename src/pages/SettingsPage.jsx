@@ -18,7 +18,7 @@ const SettingsPage = () => {
     const { isEnabled: isKeyboardEnabled, toggleKeyboardEnabled } = useKeyboard();
 
     // App Settings
-    const [appName, setAppName] = useState(localStorage.getItem('appName') || 'MarketPOS');
+    const [appName, setAppName] = useState(localStorage.getItem('appName') || 'Simply Meds');
     const [storeAddress, setStoreAddress] = useState(localStorage.getItem('storeAddress') || '');
     const [storePhone, setStorePhone] = useState(localStorage.getItem('storePhone') || '');
     const [adminPin, setAdminPin] = useState(localStorage.getItem('adminPin') || '1234');
@@ -362,7 +362,7 @@ const SettingsPage = () => {
                             label={t('settings.app_name')}
                             value={appName}
                             onChange={(e) => setAppName(e.target.value)}
-                            placeholder="MarketPOS"
+                            placeholder="Simply Meds"
                         />
                         <Input
                             label={t('settings.store_address')}

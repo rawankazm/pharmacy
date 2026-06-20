@@ -1,5 +1,5 @@
 {
-    "app_title": "MarketPOS",
+    "app_title": "Simply Meds",
     "dashboard": "Dashboard",
     "lang": "en",
     "menu": {
@@ -158,12 +158,12 @@
         "occupied": "OCCUPIED"
     },
     "receipt": {
-        "title": "MarketPOS",
-        "subtitle": "Fresh Quality Daily",
+        "title": "Simply Meds",
+        "subtitle": "Your Health is Our Priority",
         "date": "Date",
-        "cashier": "Cashier",
-        "thank_you": "Thank you for shopping!",
-        "visit_again": "Please visit us again."
+        "cashier": "Pharmacist",
+        "thank_you": "Thank you for your trust!",
+        "visit_again": "Wishing you good health."
     },
     "admin": {
         "security_check": "Security Check",

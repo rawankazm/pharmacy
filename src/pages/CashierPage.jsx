@@ -66,7 +66,7 @@ const CashierPage = () => {
     const formatPrice = (price) => `${Number(price).toLocaleString()} ${t('common.currency')}`;
     const socket = useSocket();
 
-    const storeName = localStorage.getItem('appName') || 'MarketPOS';
+    const storeName = localStorage.getItem('appName') || 'Simply Meds';
     const storeAddress = localStorage.getItem('storeAddress') || '';
     const storePhone = localStorage.getItem('storePhone') || '';
 

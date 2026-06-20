@@ -594,7 +594,7 @@ const ShiftReportsPage = () => {
                         </div>
 
                         <div className="border-t border-dashed border-gray-300 pt-4 mt-12 text-center text-xs text-gray-400">
-                            سیستمی مارکێت پۆس (MarketPOS)
+                            سیستمی دەرمانخانە پۆس (Simply Meds)
                         </div>
                     </div>
                 )}
